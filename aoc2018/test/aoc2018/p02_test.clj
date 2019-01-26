@@ -1,6 +1,6 @@
-(ns aoc2018.p2-test
+(ns aoc2018.p02-test
   (:require [clojure.test :refer :all]
-            [aoc2018.p2 :as p]))
+            [aoc2018.p02 :as p]))
 
 (deftest box-id-counts
   (are [counts box-id] (= counts (p/box-id-counts box-id))

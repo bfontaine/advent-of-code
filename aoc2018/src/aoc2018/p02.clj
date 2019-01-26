@@ -1,4 +1,4 @@
-(ns aoc2018.p2
+(ns aoc2018.p02
   (:require [clojure.string :as str]
             [clojure.set :as set]))
 

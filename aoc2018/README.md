@@ -10,12 +10,12 @@ My solutions to the [Advent of Code 2018][aoc18].
 lein repl
 ```
 ```clojure
-(require '[aoc2018.p1 :as p1])
+(require '[aoc2018.p01 :as p])
 
 ;; Problem 1.1
-(p1/solution1 "input.txt")
+(p/solution1 "input.txt")
 ;; Problem 1.2
-(p1/solution2 "input.txt")
+(p/solution2 "input.txt")
 ```
 
 ## Tests

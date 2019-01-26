@@ -1,4 +1,4 @@
-(ns aoc2018.p1
+(ns aoc2018.p01
   (:require [clojure.string :as str]))
 
 (defn- parse-file

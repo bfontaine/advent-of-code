@@ -1,6 +1,6 @@
-(ns aoc2018.p1-test
+(ns aoc2018.p01-test
   (:require [clojure.test :refer :all]
-            [aoc2018.p1 :as p]))
+            [aoc2018.p01 :as p]))
 
 (deftest get-frequency
   (are [freq changes] (= freq (p/get-frequency changes))
