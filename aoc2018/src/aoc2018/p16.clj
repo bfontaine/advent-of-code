@@ -22,56 +22,43 @@
   (let [problems-text (first (str/split text #"\n\n\n"))]
     (map parse-problem (str/split problems-text #"\n\n"))))
 
-(defn parse-file
-  [filename]
-  (parse-input (slurp filename)))
+(defn- mk-op
+  [f get-a get-b]
+  (fn [[a b c] registers]
+    (let [result (f
+                  (if (= :r get-a) (nth registers a) a)
+                  (if (= :r get-b) (nth registers b) b))]
+      (assoc registers c result))))
 
-(defn apply-register-op
-  [f [a b c] registers]
-  (let [result (f (nth registers a) (nth registers b))]
-    (assoc registers c result)))
+(defn rr-op [f] (mk-op f :r :r))
+(defn ri-op [f] (mk-op f :r :i))
+(defn ir-op [f] (mk-op f :i :r))
 
-(defn apply-value-op
-  [f [a b c] registers]
-  (let [result (f (nth registers a) b)]
-    (assoc registers c result)))
+(defn pred
+  [f]
+  (fn [a b]
+    (if (f a b) 1 0)))
 
-(defn apply-rr-pred-op
-  [pred args registers]
-  (apply-register-op
-    (fn [a b] (if (pred a b) 1 0)) args registers))
+(def addr (rr-op +))
+(def mulr (rr-op *))
+(def borr (rr-op bit-or))
+(def banr (rr-op bit-and))
 
-(defn apply-ir-pred-op
-  [pred [a b c] registers]
-  (let [result (if (pred a (nth registers b)) 1 0)]
-    (assoc registers c result)))
+(def setr (rr-op (fn [a _] a)))
+(def seti (ir-op (fn [a _] a)))
 
-(defn apply-ri-pred-op
-  [pred args registers]
-  (apply-value-op
-    (fn [a b] (if (pred a b) 1 0)) args registers))
+(def gtrr (rr-op (pred >)))
+(def gtir (ir-op (pred >)))
+(def gtri (ri-op (pred >)))
 
-(def addr (partial apply-register-op +))
-(def mulr (partial apply-register-op *))
-(def borr (partial apply-register-op bit-or))
-(def banr (partial apply-register-op bit-and))
+(def eqrr (rr-op (pred =)))
+(def eqir (ir-op (pred =)))
+(def eqri (ri-op (pred =)))
 
-(def setr (partial apply-register-op (fn [a _] a)))
-(def seti (fn [[a _ c] registers]
-            (assoc registers c a)))
-
-(def gtrr (partial apply-rr-pred-op >))
-(def gtir (partial apply-ir-pred-op >))
-(def gtri (partial apply-ri-pred-op >))
-
-(def eqrr (partial apply-rr-pred-op =))
-(def eqir (partial apply-ir-pred-op =))
-(def eqri (partial apply-ri-pred-op =))
-
-(def addi (partial apply-value-op +))
-(def muli (partial apply-value-op *))
-(def bori (partial apply-value-op bit-or))
-(def bani (partial apply-value-op bit-and))
+(def addi (ri-op +))
+(def muli (ri-op *))
+(def bori (ri-op bit-or))
+(def bani (ri-op bit-and))
 
 (def ops
   [#'addr
@@ -91,28 +78,19 @@
    #'eqir
    #'eqri])
 
-(defn solve-problem
+(defn problem-ops
   [[before [_ a b c] after]]
-  (reduce (fn [acc op]
-              (if (= (op [a b c] before) after)
-                (inc acc)
-                acc))
-            0
-            ops))
+  (filter (fn [op]
+            (= (op [a b c] before) after))
+          ops))
 
 (defn solve-problems
   [problems]
   (->> problems
        (filter (fn [problem]
-                 (>= (solve-problem problem) 3)))
+                 (>= (count (problem-ops problem)) 3)))
        count))
 
-(defn solve-input
-  [text]
-  (solve-problems (parse-input text)))
-
-(defn solve-file
+(defn solution1
   [filename]
-  (solve-input (slurp filename)))
-
-(def solution1 solve-file)
+  (-> filename slurp parse-input solve-problems))
