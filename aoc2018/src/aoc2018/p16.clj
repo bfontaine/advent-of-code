@@ -1,5 +1,6 @@
 (ns aoc2018.p16
   (:require [clojure.string :as str]
+            [clojure.set :as set]
             [clojure.edn :as edn]))
 
 (defn- parse-register-text
@@ -17,10 +18,13 @@
      (parse-op op)
      (parse-register-text after)]))
 
-(defn parse-input
+(defn split-input
   [text]
-  (let [problems-text (first (str/split text #"\n\n\n"))]
-    (map parse-problem (str/split problems-text #"\n\n"))))
+  (str/split text #"\n\n\n\n"))
+
+(defn parse-problems-input
+  [problems-text]
+  (map parse-problem (str/split problems-text #"\n\n")))
 
 (defn- mk-op
   [f get-a get-b]
@@ -93,4 +97,52 @@
 
 (defn solution1
   [filename]
-  (-> filename slurp parse-input solve-problems))
+  (-> filename slurp split-input first parse-problems-input solve-problems))
+
+
+(defn guess-ops
+  [problems]
+  (let [guesses (reduce (fn [guesses problem]
+                          (let [[_ [code _ _ _] _] problem
+                                ops (into #{} (problem-ops problem))]
+                            (update guesses code #(if %
+                                                    (set/intersection % ops)
+                                                    ops))))
+                        {}
+                        problems)]
+
+    ;; Note this loops forever if there's no solution
+    (loop [found {}
+           found-ops #{}
+           guesses guesses]
+      (if (empty? guesses)
+        found
+        (let [findings (filter (fn [[_ ops]] (= 1 (count ops))) guesses)
+              found (into found (map (fn [[k v]] [k (first v)]) findings))
+              found-ops (reduce set/union found-ops (map second findings))
+              guesses (reduce-kv (fn [acc n ops]
+                                   (if (found n)
+                                     acc
+                                     (assoc acc n (set/difference
+                                                    ops
+                                                    found-ops))))
+                                 {}
+                                 guesses)]
+          (recur
+            found
+            found-ops
+            guesses))))))
+
+(defn solution2
+  [filename]
+  (let [[problems-input ops-input] (-> filename slurp split-input)
+        problems (parse-problems-input problems-input)
+        ops (->> ops-input str/split-lines (map parse-op))
+
+        fns (guess-ops problems)]
+
+    (first
+      (reduce (fn [registers [op & args]]
+                ((fns op) args registers))
+              [0 0 0 0]
+              ops))))
