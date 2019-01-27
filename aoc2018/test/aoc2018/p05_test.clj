@@ -10,3 +10,6 @@
        "abAB" "abAB"
        "aabAAB" "aabAAB"
        "dabCBAcaDA" "dabAcCaCBAcCcaDA"))
+
+(deftest shortest-polymer-length
+  (is (= 4 (p/shortest-polymer-length "dabAcCaCBAcCcaDA"))))
