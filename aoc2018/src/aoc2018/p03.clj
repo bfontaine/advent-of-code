@@ -47,12 +47,17 @@
   [m coords]
   (map #(get m %) (pixels coords)))
 
-(defn solution1
-  [filename]
-  (->> (parse-file filename)
+(defn overlap-size
+  [claims]
+  (->> claims
        fill-matrix
        (filter (fn [[_ n]] (> n 1)))
        count))
+
+(defn solution1
+  [filename]
+  (overlap-size
+    (parse-file filename)))
 
 (defn solution2
   [filename]
