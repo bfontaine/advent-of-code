@@ -8,7 +8,7 @@
         (->> (re-matches #"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)$" line)
              rest
              (map  #(Long/parseLong %)))]
-    [claim x y width height]))
+    [claim [x y width height]]))
 
 (defn parse-file
   [filename]
@@ -16,23 +16,36 @@
        str/split-lines
        (map parse-line)))
 
+(defn update-pixels
+  [m [x y width height] f]
+  (reduce (fn [m x] ; x
+            (reduce (fn [m y] ; y
+                      (update m [x y] f))
+                    m
+                    (range y (+ y height))))
+
+          m
+          (range x (+ x width))))
+
 (defn fill-matrix
   [lines]
-  ;; {(x, y) -> #
-  (reduce (fn [acc [_ x y width height]] ; elves
-            (reduce (fn [acc x] ; x
-                      (reduce (fn [acc y] ; y
-                                (update acc [x y] (fn [n]
-                                                    (if n
-                                                      (inc n)
-                                                      1))))
-                              acc
-                              (range y (+ y height))))
-
-                    acc
-                    (range x (+ x width))))
+  ;; {(x, y) -> n
+  (reduce (fn [acc [_ coords]] ; elves
+            (update-pixels acc coords (fn [n] (if n
+                                                (inc n)
+                                                1))))
           {}
           lines))
+
+(defn pixels
+  [[x y width height]]
+  (for [x (range x (+ x width))
+        y (range y (+ y height))]
+    [x y]))
+
+(defn matrix-pixels
+  [m coords]
+  (map #(get m %) (pixels coords)))
 
 (defn solution1
   [filename]
@@ -41,22 +54,13 @@
        (filter (fn [[_ n]] (> n 1)))
        count))
 
-(defn pixels
-  [x y width height]
-  (for [x (range x (+ x width))
-        y (range y (+ y height))]
-    [x y]))
-
-(defn matrix-pixels
-  [m x y width height]
-  (map #(get m %) (pixels x y width height)))
-
 (defn solution2
   [filename]
+  ;; Very inefficient, but it works(TM)
   (let [claims (parse-file filename)
         matrix (fill-matrix claims)]
     (->> claims
-         (filter (fn [[claim x y width height]]
+         (filter (fn [[claim coords]]
                    (every? #(= 1 %)
-                           (matrix-pixels matrix x y width height))))
-         (map first))))
+                           (matrix-pixels matrix coords))))
+         ffirst)))
