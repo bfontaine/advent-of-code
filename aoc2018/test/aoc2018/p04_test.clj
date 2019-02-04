@@ -93,3 +93,6 @@
 
 (deftest solution1-lines
   (is (= 240 (p/solution1-lines sample-lines))))
+
+(deftest solution2-lines
+  (is (= 4455 (p/solution2-lines sample-lines))))

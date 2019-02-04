@@ -85,9 +85,18 @@
              {}
              shifts-by-guard))
 
-(defn- solve-solution1
-  [minutes-maps]
-  (let [[best-guard best-minutes-map] (apply max-key
+(defn lines->guards-minutes-maps
+  [lines]
+  (->> lines
+       build-shifts                       ; shifts
+       shifts-by-guard                    ; shifts by guard
+       guards-shifts->guards-minutes-maps ; minute maps by guard
+       ))
+
+(defn solution1-lines
+  [lines]
+  (let [minutes-maps (lines->guards-minutes-maps lines)
+        [best-guard best-minutes-map] (apply max-key
                                              (fn [[g minutes-map]]
                                                (reduce + (vals minutes-map)))
                                              minutes-maps)
@@ -100,17 +109,41 @@
     (* best-guard-n
        best-minute)))
 
-(defn solution1-lines
-  [lines]
-  (->> lines
-       build-shifts                       ; shifts
-       shifts-by-guard                    ; shifts by guard
-       guards-shifts->guards-minutes-maps ; minute maps by guard
-       solve-solution1))
-
-(defn solution1
+(defn file-lines
   [filename]
   (->> (slurp filename)
        str/split-lines
-       (map parse-line)                   ; lines
+       (map parse-line)))                 ; lines
+
+(defn solution1
+  [filename]
+  (->> filename
+       file-lines
        solution1-lines))
+
+(defn solution2-lines
+  [lines]
+  (let [[best-guard best-minute _]
+        (->> lines
+             lines->guards-minutes-maps
+             (reduce-kv (fn [acc guard minutes-map]
+                          (reduce-kv (fn [[best-guard
+                                           best-minute
+                                           best-n] minute n]
+
+                                       (if (or (nil? best-n) (> n best-n))
+                                         [guard minute n]
+                                         [best-guard best-minute best-n]))
+                                     acc
+                                     minutes-map))
+                        nil))
+
+        best-guard-n (Long/parseLong best-guard)]
+    (* best-guard-n
+       best-minute)))
+
+(defn solution2
+  [filename]
+  (->> filename
+       file-lines
+       solution2-lines))
