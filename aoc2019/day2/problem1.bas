@@ -2,19 +2,19 @@
 0020 REM ---------------------------------------
 0030 REM
 0040 REM Goal:
-0050 REM  Read a comma-separated list of integers, representing the code to feed to
-0060 REM  a simple interpreter. That code can override itself.
+0050 REM  Read a comma-separated list of integers, representing the code to
+0060 REM  feed to a simple interpreter. That code can override itself.
 0070 REM  Instructions:
-0080 REM    1 A B C -- take values at positions A and B and store their sum at C
-0090 REM    2 A B C -- .............................................. product...
+0080 REM    1 A B C -- take vals at positions A and B and store their sum at C
+0090 REM    2 A B C -- ............................................. product...
 0100 REM   99       -- halt the program
 0110 REM
-0120 REM  The program starts at position 0, and goes forward by 4 positions at each
-0130 REM  step until it arrives at 99, at which point it stops and return the value
-0140 REM  at position 0.
+0120 REM  The program starts at position 0, and goes forward by 4 positions at
+0130 REM  each step until it arrives at 99, at which point it stops and returns
+0140 REM  the value at position 0.
 0150 REM
-0160 REM  After loading the code the interpreter should overwrite position 1 with
-0170 REM  the value 12, and position 2 with the value 2.
+0160 REM  After loading the code the interpreter should overwrite position 1
+0170 REM  with the value 12, and position 2 with the value 2.
 0180 REM
 0190 REM  Limitations:
 0191 REM   This only works on inputs with up to 500 slots. The input MUST end
