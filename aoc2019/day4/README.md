@@ -2,4 +2,8 @@
 
 ## Problem 1
 
-    ./problem1.php <input>
+    ./day4.php 1 <input>
+
+## Problem 2
+
+    ./day4.php 2 <input>
