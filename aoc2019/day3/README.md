@@ -2,6 +2,8 @@
 
 ## Problem 1
 
-    ./problem1.jl input.txt
+    ./day3.jl 1 input.txt
 
 ## Problem 2
+
+    ./day3.jl 2 input.txt
