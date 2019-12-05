@@ -10,15 +10,20 @@ enum IntcodeOps
   MUL = 2
   INPUT = 3
   OUTPUT = 4
+  JMP_TRUE = 5
+  JMP_FALSE = 6
+  LT = 7
+  EQ = 8
   HALT = 99
 end
 
 class IntcodeRunner
   # Initialize a new runner on the given instructions. Note it modifies its
   # argument.
-  def initialize(instructions : Array(Int32), debug=false)
+  def initialize(instructions : Array(Int32), debug=false, input : Int32?=nil)
     @instructions = instructions
     @debug = debug
+    @input = input
 
     @cursor = 0
     @done = false
@@ -47,14 +52,30 @@ class IntcodeRunner
     debug "op=#{op}, modes=#{modes}"
 
     case op
+    # add/mul
     when IntcodeOps::ADD.value
-      run_op_ptr2(modes) { |a, b| a + b }
+      run_op2(modes) { |a, b| a + b }
     when IntcodeOps::MUL.value
-      run_op_ptr2(modes) { |a, b| a * b }
+      run_op2(modes) { |a, b| a * b }
+
+    # I/O
     when IntcodeOps::INPUT.value
       run_op_input
     when IntcodeOps::OUTPUT.value
       run_op_output(modes)
+
+    # Jumps
+    when IntcodeOps::JMP_TRUE.value
+      run_op_jmp(modes) { |value| value != 0 }
+    when IntcodeOps::JMP_FALSE.value
+      run_op_jmp(modes) { |value| value == 0 }
+
+    # Comparisons
+    when IntcodeOps::LT.value
+      run_op2(modes) { |a, b| a < b ? 1 : 0 }
+    when IntcodeOps::EQ.value
+      run_op2(modes) { |a, b| a == b ? 1 : 0 }
+
     when IntcodeOps::HALT.value
       @done = true
     else
@@ -89,7 +110,8 @@ class IntcodeRunner
     end
   end
 
-  private def run_op_ptr2(modes)
+  # Run all operations with two parameters and one position for the result
+  private def run_op2(modes)
     # OP, a, b, position
     # position <- block(a, b)
 
@@ -118,11 +140,32 @@ class IntcodeRunner
     # OP, <position>
     # position <- input (always 1 for now)
     position = @instructions[@cursor+1]
-    input = 1
-    @instructions[position] = input
+    input = if @input.nil?
+              print "INPUT> "
+              gets.not_nil!.chomp.to_i
+            else
+              @input
+            end
+    # `... = input` doesn't work even if input will never be nil
+    if input.nil?
+      raise "Unexpected nil input"
+    else
+      @instructions[position] = input
+    end
     debug "input: [#{position}]<- #{input}"
 
     @cursor += 2
+  end
+
+  private def run_op_jmp(modes)
+    val1 = get_value(0, modes)
+    ok = yield val1
+    unless ok
+      @cursor += 3
+      return
+    end
+
+    @cursor = get_value(1, modes)
   end
 
   private def debug(msg)
