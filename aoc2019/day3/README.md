@@ -1,5 +1,7 @@
 # Day 3 (Julia)
 
+This needs Julia 1.3+.
+
 ## Problem 1
 
     ./day3.jl 1 input.txt

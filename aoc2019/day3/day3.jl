@@ -10,7 +10,7 @@ module Wires
 
 const Coordinates = Tuple{Int64, Int64}
 
-const Wire = Array{Coordinates,1}
+const Wire = Dict{Coordinates, Int64}
 
 function parse_direction(direction :: AbstractString)
   len = parse(Int64, direction[2:end])
@@ -35,7 +35,7 @@ function gen_range(start :: Int64, offset :: Int64)
   start:step:start+offset
 end
 
-function gen_segment(origin :: Coordinates, direction :: Coordinates)
+function gen_segment(origin :: Coordinates, direction :: Coordinates, index :: Int64)
   segment = Wire()
 
   ox, oy = origin
@@ -47,7 +47,8 @@ function gen_segment(origin :: Coordinates, direction :: Coordinates)
         continue
       end
 
-      push!(segment, (x, y))
+      segment[x, y] = index
+      index += 1
     end
   end
 
@@ -57,13 +58,19 @@ end
 function parse_wire(line :: String)
   wire = Wire()
   position :: Coordinates = (0, 0)
+  index = 1
+
   for direction_string = split(line, ",")
     direction = parse_direction(direction_string)
+    segment = gen_segment(position, direction, index)
 
-    for coords = gen_segment(position, direction)
-      push!(wire, coords)
+    for (coords, index) in segment
+      if !haskey(wire, coords)
+        wire[coords] = index
+      end
     end
 
+    index += length(segment)
     position = (position[1]+direction[1], position[2]+direction[2])
   end
 
@@ -75,28 +82,28 @@ function manhattan_distance_to_origin(cell :: Coordinates)
   abs(x) + abs(y)
 end
 
+function wire_coordinates_set(wire :: Wire)
+  Set([k for (k, _) in wire])
+end
+
+function wires_crossings_set(wire1 :: Wire, wire2 :: Wire)
+  intersect(wire_coordinates_set(wire1), wire_coordinates_set(wire2))
+end
+
 function wires_crossing_distance(wire1 :: Wire, wire2 :: Wire)
-  crossings = intersect(Set(wire1), Set(wire2))
+  crossings = wires_crossings_set(wire1, wire2)
   minimum(manhattan_distance_to_origin, crossings)
 end
 
 function wires_crossing_steps(wire1 :: Wire, wire2 :: Wire)
+  crossings = wires_crossings_set(wire1, wire2)
   best_steps = length(wire1) + length(wire2)
 
-  for (steps1, coords1) in enumerate(wire1)
-    if steps1 > best_steps
-      break
-    end
+  for coords in crossings
+    steps = wire1[coords] + wire2[coords]
 
-    for (steps2, coords2) in enumerate(wire2)
-      steps = steps1 + steps2
-      if steps > best_steps
-        break
-      end
-
-      if coords1 == coords2 && steps < best_steps
-        best_steps = steps
-      end
+    if steps < best_steps
+      best_steps = steps
     end
   end
 
