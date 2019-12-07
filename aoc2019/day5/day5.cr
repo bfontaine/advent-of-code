@@ -1,5 +1,7 @@
 #!/usr/bin/env crystal
 
+require "option_parser"
+
 enum IntcodeModes
   POSITION = 0
   IMMEDIATE = 1
@@ -20,10 +22,12 @@ end
 class IntcodeRunner
   # Initialize a new runner on the given instructions. Note it modifies its
   # argument.
-  def initialize(instructions : Array(Int32), debug=false, input : Int32?=nil)
+  def initialize(instructions : Array(Int32), debug=false,
+                 inputs : Array(Int32)?=nil)
     @instructions = instructions
     @debug = debug
-    @input = input
+    # without .dup the compiler thinks @inputs can be nil even if it can't
+    @inputs = inputs.nil? ? [] of Int32 : inputs.dup
 
     @cursor = 0
     @done = false
@@ -140,18 +144,14 @@ class IntcodeRunner
     # OP, <position>
     # position <- input (always 1 for now)
     position = @instructions[@cursor+1]
-    input = if @input.nil?
+    input = if @inputs.empty?
               print "INPUT> "
               gets.not_nil!.chomp.to_i
             else
-              @input
+              @inputs.shift
             end
-    # `... = input` doesn't work even if input will never be nil
-    if input.nil?
-      raise "Unexpected nil input"
-    else
-      @instructions[position] = input
-    end
+
+    @instructions[position] = input
     debug "input: [#{position}]<- #{input}"
 
     @cursor += 2
@@ -179,12 +179,30 @@ def parse_code(code) : Array(Int32)
   code.chomp.split(",").map(&.to_i)
 end
 
-if ARGV.size != 1
-  puts "Please give me the input.txt filename!\n"
+inputs = [] of Int32
+filenames = [] of String
+
+OptionParser.parse do |parser|
+  parser.banner = "Usage: day5 [options] <input.txt>"
+
+  parser.unknown_args do |filenames_|
+    filenames = filenames_
+  end
+
+  parser.on("-i INPUTS", "--inputs=INPUTS",
+            "Feed the program with these comma-separated inputs") do |s|
+    inputs = parse_code(s)
+  end
+
+  parser.on("-h", "--help", "Show this help") { puts parser }
+end
+
+if filenames.size != 1
+  puts "Please give me one input.txt filename!\n"
   exit 1
 end
 
-code = File.read(ARGV[0])
+code = File.read(filenames[0])
 instructions = parse_code(code)
-runner = IntcodeRunner.new(instructions)
+runner = IntcodeRunner.new(instructions, inputs: inputs)
 runner.run
