@@ -11,3 +11,4 @@ each problem in a different language.
 * [Day 4](./day4): PHP
 * [Day 5](./day5): Crystal
 * [Day 6](./day6): Awk
+* [Day 7](./day7): Perl
