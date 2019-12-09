@@ -2,4 +2,8 @@
 
 ## Problem 1
 
-    ./problem1.cr <input.txt>
+    ./day9.cr 1 <input.txt>
+
+## Problem 2
+
+    ./day9.cr 2 <input.txt>
