@@ -18,35 +18,48 @@ enum IntcodeOps
   HALT = 99
 end
 
+alias IntcodeValue = Int64
+alias IntcodePosition = IntcodeValue
+
+# shortcuts
+INTCODE_0 = IntcodeValue.new 0
+INTCODE_1 = IntcodeValue.new 1
+
+
 class IntcodeRunner
-  @instructions : Hash(Int32, Int32)
+  @instructions : Hash(IntcodePosition, IntcodeValue)
+
+  @cursor : IntcodePosition
+  @relative_base : IntcodePosition
+  @input_position : IntcodePosition
+
+  @last_output : IntcodeValue
 
   # Initialize a new runner on the given instructions.
-  def initialize(instructions : Array(Int32),
+  def initialize(instructions : Array(IntcodeValue),
                  debug=false,
-                 inputs : Array(Int32)?=nil)
+                 inputs : Array(IntcodeValue|Int32)?=nil)
 
-    positions = (0..instructions.size-1).to_a
+    positions = (0..instructions.size-1).map(&.to_i64).to_a
 
     # Use a hash in order to allow arbitrary positions
     @instructions = Hash.zip(positions, instructions)
     @debug = debug
     # without .dup the compiler thinks @inputs can be nil even if it can't
-    @inputs = inputs.nil? ? [] of Int32 : inputs.dup
+    @inputs = inputs.nil? ? [] of IntcodeValue : inputs.map(&.to_i64)
 
-    @outputs = [] of Int32
+    @outputs = [] of IntcodeValue
     @last_output = -1
-
-    @input_position = -1
 
     @cursor = 0
     @relative_base = 0
+    @input_position = -1
 
     @done = false
   end
 
   # Return the program result
-  def result : Int32
+  def result : IntcodeValue
     read 0
   end
 
@@ -84,7 +97,7 @@ class IntcodeRunner
   end
 
   # Add an input to the inputs queue.
-  def add_input(value : Int32)
+  def add_input(value : IntcodeValue)
     @inputs << value
   end
 
@@ -129,9 +142,9 @@ class IntcodeRunner
 
     # Comparisons
     when IntcodeOps::LT.value
-      run_op2(modes) { |a, b| a < b ? 1 : 0 }
+      run_op2(modes) { |a, b| a < b ? INTCODE_1 : INTCODE_0 }
     when IntcodeOps::EQ.value
-      run_op2(modes) { |a, b| a == b ? 1 : 0 }
+      run_op2(modes) { |a, b| a == b ? INTCODE_1 : INTCODE_0 }
 
     # Relative base
     when IntcodeOps::RELATIVE_BASE.value
@@ -177,7 +190,7 @@ class IntcodeRunner
   end
 
   # Run all operations with two parameters and one position for the result
-  private def run_op2(modes)
+  private def run_op2(modes, &block: IntcodeValue, IntcodeValue -> IntcodeValue)
     # OP, a, b, position
     # position <- block(a, b)
 
@@ -237,12 +250,12 @@ class IntcodeRunner
     @cursor += 2
   end
 
-  private def write(position, value)
+  private def write(position : IntcodePosition, value : IntcodeValue)
     @instructions[position] = value
   end
 
-  private def read(position)
-    @instructions.fetch(position, 0)
+  private def read(position : IntcodePosition)
+    @instructions.fetch(position, IntcodeValue.new(0))
   end
 
   private def debug(msg)
@@ -252,6 +265,6 @@ class IntcodeRunner
   end
 end
 
-def parse_code(code) : Array(Int32)
-  code.chomp.split(",").map(&.to_i)
+def parse_code(code) : Array(IntcodeValue)
+  code.chomp.split(",").map(&.to_i64)
 end

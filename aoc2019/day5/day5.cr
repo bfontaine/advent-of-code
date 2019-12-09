@@ -34,7 +34,7 @@ until runner.done?
   case res
   when :needs_input
     print "INPUT> "
-    runner.add_input gets.not_nil!.chomp.to_i
+    runner.add_input gets.not_nil!.chomp.to_i64
   end
   while runner.has_output?
     puts runner.read_output
