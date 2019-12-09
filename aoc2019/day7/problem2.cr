@@ -10,7 +10,7 @@ end
 
 def run_loop(instructions, phases)
   amplifiers = phases.map do |phase|
-    IntcodeRunner.new instructions.clone, inputs: [phase]
+    IntcodeRunner.new instructions, inputs: [phase]
   end
 
   last_output = -1
