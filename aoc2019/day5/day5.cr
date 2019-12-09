@@ -35,7 +35,8 @@ until runner.done?
   when :needs_input
     print "INPUT> "
     runner.add_input gets.not_nil!.chomp.to_i
-  when :has_output
+  end
+  while runner.has_output?
     puts runner.read_output
   end
 end

@@ -1,9 +1,9 @@
-# Day 7 (Perl 5)
+# Day 7 (Perl / Crystal)
 
-Note this reuses the [Day 5](../day5) binary:
-
-    cd ../day5 ; crystal build ./day5.cr
-
-## Problem 1
+## Problem 1 (Perl)
 
     ./problem1.pl input.txt
+
+Note this reuses the [Day 5](../day5) binary.
+
+## Problem 2 (Crystal)

@@ -27,9 +27,10 @@ class IntcodeRunner
     # without .dup the compiler thinks @inputs can be nil even if it can't
     @inputs = inputs.nil? ? [] of Int32 : inputs.dup
 
+    @outputs = [] of Int32
+    @last_output = -1
+
     @input_position = -1
-    @output = 0
-    @has_output = false
 
     @cursor = 0
     @done = false
@@ -51,20 +52,18 @@ class IntcodeRunner
     @input_position >= 0 && @inputs.empty?
   end
 
-  # Return true if the program has an output to write in order to continue to
-  # run.
+  # Return true if the program's last output has yet to be read with
+  # .read_output().
   def has_output?
-    @has_output
+    !@outputs.empty?
   end
 
-  # Run the program until it's done, or it needs an input, or has an output.
-  # Return either :done, :needs_input, or :has_output.
+  # Run the program until it's done or it needs an input.
+  # Return either :done or :needs_input.
   # In the :needs_input case, feed it an input using .add_input(…) and run it
   #  again.
-  # In the :has_output case, read the output using .read_output and run it
-  #  again.
   def run
-    until done? || needs_input? || has_output?
+    until done? || needs_input?
       run_op
     end
 
@@ -72,8 +71,6 @@ class IntcodeRunner
       :done
     elsif needs_input?
       :needs_input
-    elsif has_output?
-      :has_output
     end
   end
 
@@ -82,13 +79,15 @@ class IntcodeRunner
     @inputs << value
   end
 
-  # Read a program output. Return nil if there's no output. This consumes the
-  # output; calling this twice first return the output (if any), then nil.
+  # Read the program's last unread output.
   def read_output
-    if @has_output
-      @has_output = false
-      @output
-    end
+    output = @outputs.shift
+    @last_output = output
+  end
+
+  # Return the last read output
+  def last_output
+    @last_output
   end
 
   # -- Private API --
@@ -181,8 +180,7 @@ class IntcodeRunner
     # OP, <code>
     output = get_value(0, modes)
     debug "output: #{output}"
-    @output = output
-    @has_output = true
+    @outputs << output
     @cursor += 2
   end
 
