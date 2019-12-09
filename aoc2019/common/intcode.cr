@@ -19,31 +19,79 @@ end
 class IntcodeRunner
   # Initialize a new runner on the given instructions. Note it modifies its
   # argument.
-  def initialize(instructions : Array(Int32), debug=false,
+  def initialize(instructions : Array(Int32),
+                 debug=false,
                  inputs : Array(Int32)?=nil)
     @instructions = instructions
     @debug = debug
     # without .dup the compiler thinks @inputs can be nil even if it can't
     @inputs = inputs.nil? ? [] of Int32 : inputs.dup
 
+    @input_position = -1
+    @output = 0
+    @has_output = false
+
     @cursor = 0
     @done = false
   end
 
+  # Return the program result
   def result : Int32
     @instructions[0]
   end
 
+  # Return true if the program is done, i.e. it encountered an HALT
+  # instruction.
   def done?
     @done
   end
 
+  # Return true if the program needs an input to continue to run.
+  def needs_input?
+    @input_position >= 0 && @inputs.empty?
+  end
+
+  # Return true if the program has an output to write in order to continue to
+  # run.
+  def has_output?
+    @has_output
+  end
+
+  # Run the program until it's done, or it needs an input, or has an output.
+  # Return either :done, :needs_input, or :has_output.
+  # In the :needs_input case, feed it an input using .add_input(…) and run it
+  #  again.
+  # In the :has_output case, read the output using .read_output and run it
+  #  again.
   def run
-    until done?
+    until done? || needs_input? || has_output?
       run_op
     end
-    result
+
+    if done?
+      :done
+    elsif needs_input?
+      :needs_input
+    elsif has_output?
+      :has_output
+    end
   end
+
+  # Add an input to the inputs queue.
+  def add_input(value : Int32)
+    @inputs << value
+  end
+
+  # Read a program output. Return nil if there's no output. This consumes the
+  # output; calling this twice first return the output (if any), then nil.
+  def read_output
+    if @has_output
+      @has_output = false
+      @output
+    end
+  end
+
+  # -- Private API --
 
   private def run_op
     instruction = @instructions[@cursor]
@@ -133,21 +181,24 @@ class IntcodeRunner
     # OP, <code>
     output = get_value(0, modes)
     debug "output: #{output}"
-    puts output
+    @output = output
+    @has_output = true
     @cursor += 2
   end
 
   private def run_op_input
     # OP, <position>
-    # position <- input (always 1 for now)
+    # position <- input
     position = @instructions[@cursor+1]
-    input = if @inputs.empty?
-              print "INPUT> "
-              gets.not_nil!.chomp.to_i
-            else
-              @inputs.shift
-            end
 
+    if @inputs.empty?
+      @input_position = position
+      return
+    end
+
+    @input_position = -1
+
+    input = @inputs.shift
     @instructions[position] = input
     debug "input: [#{position}]<- #{input}"
 

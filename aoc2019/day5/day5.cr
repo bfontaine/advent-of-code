@@ -29,4 +29,13 @@ end
 code = File.read(filenames[0])
 instructions = parse_code(code)
 runner = IntcodeRunner.new(instructions, inputs: inputs)
-runner.run
+until runner.done?
+  res = runner.run
+  case res
+  when :needs_input
+    print "INPUT> "
+    runner.add_input gets.not_nil!.chomp.to_i
+  when :has_output
+    puts runner.read_output
+  end
+end
