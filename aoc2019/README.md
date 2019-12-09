@@ -5,7 +5,7 @@ different language.
 
 …Well, except all Intcode-related solutions starting from the day 5: since all
 of them are built atop the previous ones, they all reuse the same core in
-Crystal (`common/intcode.cr`).
+Crystal (`common/intcode.cr`) and are thus written in that language.
 
 [2019]: https://adventofcode.com/2019
 
@@ -17,3 +17,4 @@ Crystal (`common/intcode.cr`).
 * [Day 6](./day6): Awk
 * [Day 7](./day7): Perl (part 1) / Crystal (part 2)
 * [Day 8](./day8): CoffeeScript
+* [Day 9](./day9): Crystal

@@ -130,7 +130,7 @@ class IntcodeRunner
 
     # I/O
     when IntcodeOps::INPUT.value
-      run_op_input
+      run_op_input(modes)
     when IntcodeOps::OUTPUT.value
       run_op_output(modes)
 
@@ -157,8 +157,8 @@ class IntcodeRunner
     end
   end
 
-  private def get_value(offset, modes)
-    immediate = read(@cursor+offset+1)
+  private def get_position(offset, modes)
+    value = @cursor+offset+1
     mode = if modes == 0
              0  # micro-optimization
            else
@@ -171,22 +171,24 @@ class IntcodeRunner
              m % 10
            end
 
-    case mode
-    when IntcodeModes::IMMEDIATE.value
-      debug "val#{offset}: #{immediate}"
-      immediate
-    when IntcodeModes::POSITION.value
-      val = read immediate
-      debug "val#{offset}: [#{immediate}] = #{val}"
-      val
-    when IntcodeModes::RELATIVE.value
-      position = @relative_base + immediate
-      val = read position
-      debug "val#{offset}: [#{position}] = #{val}"
-      val
-    else
-      raise "Unknown mode: #{mode}"
-    end
+    position = case mode
+               when IntcodeModes::IMMEDIATE.value
+                 value
+               when IntcodeModes::POSITION.value
+                 read value
+               when IntcodeModes::RELATIVE.value
+                 @relative_base + read(value)
+               else
+                 raise "Unknown mode: #{mode}"
+               end
+    debug "pos#{offset} = #{position}"
+    position
+  end
+
+  private def get_value(offset, modes)
+    val = read get_position(offset, modes)
+    debug "val#{offset} = #{val}"
+    val
   end
 
   # Run all operations with two parameters and one position for the result
@@ -197,7 +199,7 @@ class IntcodeRunner
     val1 = get_value(0, modes)
     val2 = get_value(1, modes)
 
-    pos3 = read(@cursor+3)
+    pos3 = get_position(2, modes)
 
     res = yield val1, val2
 
@@ -215,10 +217,10 @@ class IntcodeRunner
     @cursor += 2
   end
 
-  private def run_op_input
+  private def run_op_input(modes)
     # OP, <position>
     # position <- input
-    position = read(@cursor+1)
+    position = get_position(0, modes)
 
     if @inputs.empty?
       @input_position = position
@@ -246,6 +248,7 @@ class IntcodeRunner
 
   private def run_op_relative_base(modes)
     val = get_value(0, modes)
+    debug "Rel base = #{@relative_base} + #{val}"
     @relative_base += val
     @cursor += 2
   end
