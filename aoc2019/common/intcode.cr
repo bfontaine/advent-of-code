@@ -2,6 +2,7 @@
 enum IntcodeModes
   POSITION = 0
   IMMEDIATE = 1
+  RELATIVE = 2
 end
 
 enum IntcodeOps
@@ -13,16 +14,22 @@ enum IntcodeOps
   JMP_FALSE = 6
   LT = 7
   EQ = 8
+  RELATIVE_BASE = 9
   HALT = 99
 end
 
 class IntcodeRunner
-  # Initialize a new runner on the given instructions. Note it modifies its
-  # argument.
+  @instructions : Hash(Int32, Int32)
+
+  # Initialize a new runner on the given instructions.
   def initialize(instructions : Array(Int32),
                  debug=false,
                  inputs : Array(Int32)?=nil)
-    @instructions = instructions
+
+    positions = (0..instructions.size-1).to_a
+
+    # Use a hash in order to allow arbitrary positions
+    @instructions = Hash.zip(positions, instructions)
     @debug = debug
     # without .dup the compiler thinks @inputs can be nil even if it can't
     @inputs = inputs.nil? ? [] of Int32 : inputs.dup
@@ -33,12 +40,14 @@ class IntcodeRunner
     @input_position = -1
 
     @cursor = 0
+    @relative_base = 0
+
     @done = false
   end
 
   # Return the program result
   def result : Int32
-    @instructions[0]
+    read 0
   end
 
   # Return true if the program is done, i.e. it encountered an HALT
@@ -93,7 +102,7 @@ class IntcodeRunner
   # -- Private API --
 
   private def run_op
-    instruction = @instructions[@cursor]
+    instruction = read @cursor
 
     modes, op = instruction.divmod(100)
 
@@ -124,6 +133,10 @@ class IntcodeRunner
     when IntcodeOps::EQ.value
       run_op2(modes) { |a, b| a == b ? 1 : 0 }
 
+    # Relative base
+    when IntcodeOps::RELATIVE_BASE.value
+      run_op_relative_base(modes)
+
     when IntcodeOps::HALT.value
       @done = true
     else
@@ -132,7 +145,7 @@ class IntcodeRunner
   end
 
   private def get_value(offset, modes)
-    immediate = @instructions[@cursor+offset+1]
+    immediate = read(@cursor+offset+1)
     mode = if modes == 0
              0  # micro-optimization
            else
@@ -150,8 +163,13 @@ class IntcodeRunner
       debug "val#{offset}: #{immediate}"
       immediate
     when IntcodeModes::POSITION.value
-      val = @instructions[immediate]
+      val = read immediate
       debug "val#{offset}: [#{immediate}] = #{val}"
+      val
+    when IntcodeModes::RELATIVE.value
+      position = @relative_base + immediate
+      val = read position
+      debug "val#{offset}: [#{position}] = #{val}"
       val
     else
       raise "Unknown mode: #{mode}"
@@ -166,13 +184,13 @@ class IntcodeRunner
     val1 = get_value(0, modes)
     val2 = get_value(1, modes)
 
-    pos3 = @instructions[@cursor+3]
+    pos3 = read(@cursor+3)
 
     res = yield val1, val2
 
     debug "op2 val1=#{val1} val2=#{val2} pos3=#{pos3} <- #{res}"
 
-    @instructions[pos3] = res
+    write pos3, res
     @cursor += 4
   end
 
@@ -187,7 +205,7 @@ class IntcodeRunner
   private def run_op_input
     # OP, <position>
     # position <- input
-    position = @instructions[@cursor+1]
+    position = read(@cursor+1)
 
     if @inputs.empty?
       @input_position = position
@@ -197,7 +215,7 @@ class IntcodeRunner
     @input_position = -1
 
     input = @inputs.shift
-    @instructions[position] = input
+    write position, input
     debug "input: [#{position}]<- #{input}"
 
     @cursor += 2
@@ -205,18 +223,31 @@ class IntcodeRunner
 
   private def run_op_jmp(modes)
     val1 = get_value(0, modes)
-    ok = yield val1
-    unless ok
+    jump = yield val1
+    if jump
+      @cursor = get_value(1, modes)
+    else
       @cursor += 3
-      return
     end
+  end
 
-    @cursor = get_value(1, modes)
+  private def run_op_relative_base(modes)
+    val = get_value(0, modes)
+    @relative_base += val
+    @cursor += 2
+  end
+
+  private def write(position, value)
+    @instructions[position] = value
+  end
+
+  private def read(position)
+    @instructions.fetch(position, 0)
   end
 
   private def debug(msg)
     return unless @debug
-    fragment = @instructions[@cursor..@cursor+4]
+    fragment = (@cursor..@cursor+4).map { |i| read i }
     puts "[DEBUG:#{@cursor}: #{fragment.join " "}] #{msg}" if @debug
   end
 end
