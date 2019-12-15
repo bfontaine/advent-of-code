@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-require_once "./day4.php";
+require_once "./day04.php";
 
 function assert_ok($expected, $number, $problem) {
     if ($expected == ok($number, $problem)) {

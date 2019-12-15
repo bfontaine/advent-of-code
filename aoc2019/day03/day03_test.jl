@@ -2,7 +2,7 @@
 
 using Test
 
-include("day3.jl")
+include("day03.jl")
 using .Wires: parse_wire, parse_direction, gen_segment, problem1, problem2
 
 @testset "parse_direction" begin

@@ -4,7 +4,7 @@
 
     ./problem1.pl <input.txt>
 
-Note this reuses the [Day 5](../day5) binary.
+Note this reuses the [Day 5](../day05) binary.
 
 ## Problem 2 (Crystal)
 

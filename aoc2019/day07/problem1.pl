@@ -15,7 +15,7 @@ my $highest_signal = 0;
 Algorithm::Permute::permute {
   my $signal = "0";
   for my $phase (@phases) {
-    chomp($signal = `../day5/day5 --inputs=$phase,$signal $filename`);
+    chomp($signal = `../day05/day05 --inputs=$phase,$signal $filename`);
   }
   if ($signal > $highest_signal) {
     $highest_signal = $signal;

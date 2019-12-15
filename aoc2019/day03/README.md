@@ -4,8 +4,8 @@ This needs Julia 1.3+.
 
 ## Problem 1
 
-    ./day3.jl 1 input.txt
+    ./day03.jl 1 input.txt
 
 ## Problem 2
 
-    ./day3.jl 2 input.txt
+    ./day03.jl 2 input.txt
