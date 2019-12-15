@@ -35,6 +35,8 @@ class IntcodeRunner
 
   @last_output : IntcodeValue
 
+  getter :last_output
+
   # Initialize a new runner on the given instructions.
   def initialize(instructions : Array(IntcodeValue),
                  debug=false,
@@ -97,12 +99,8 @@ class IntcodeRunner
   end
 
   # Add an input to the inputs queue.
-  def add_input(value : IntcodeValue)
-    @inputs << value
-  end
-
-  def add_input(value : Int32)
-      add_input value.to_i64
+  def add_input(value)
+    @inputs << value.to_i64
   end
 
   # Read the program's last unread output.
@@ -111,9 +109,9 @@ class IntcodeRunner
     @last_output = output
   end
 
-  # Return the last read output
-  def last_output
-    @last_output
+  # Overwrite the memory at a given address
+  def overwrite(position, value)
+    write position.to_i64, value.to_i64
   end
 
   # -- Private API --

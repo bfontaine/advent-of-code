@@ -21,4 +21,4 @@ Crystal (`common/intcode.cr`) and are thus written in that language.
 * Day 10
 * [Day 11](./day11): Crystal
 * Day 12
-* [Day 13](./day13): Rexx
+* [Day 13](./day13): Rexx (part 1) / Crystal (part 2)
