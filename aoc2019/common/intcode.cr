@@ -101,6 +101,10 @@ class IntcodeRunner
     @inputs << value
   end
 
+  def add_input(value : Int32)
+      add_input value.to_i64
+  end
+
   # Read the program's last unread output.
   def read_output
     output = @outputs.shift

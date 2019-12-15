@@ -18,3 +18,5 @@ Crystal (`common/intcode.cr`) and are thus written in that language.
 * [Day 7](./day07): Perl (part 1) / Crystal (part 2)
 * [Day 8](./day08): CoffeeScript
 * [Day 9](./day09): Crystal
+* Day 10
+* [Day 11](./day11): Crystal
