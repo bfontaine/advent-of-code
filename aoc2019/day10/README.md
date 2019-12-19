@@ -2,4 +2,8 @@
 
 ## Problem 1
 
-    go run ./problem1.go <input.txt>
+    go run ./day10.go 1 <input.txt>
+
+## Problem 2
+
+    go run ./day10.go 2 <input.txt>
