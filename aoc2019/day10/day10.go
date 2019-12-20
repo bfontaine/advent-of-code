@@ -4,25 +4,35 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"os"
 	"sort"
 )
 
+// Coordinates represents (x,y) coordinates
 type Coordinates struct {
 	x, y int
 }
 
-func (c Coordinates) String() string {
-	return fmt.Sprintf("(%v, %v)", c.x, c.y)
+func (cx Coordinates) String() string {
+	return fmt.Sprintf("(%v, %v)", cx.x, cx.y)
 }
 
+// Direction represents a direction
 type Direction Coordinates
 
+// Vision represents the vision from an asteroid
 type Vision struct {
 	origin Coordinates
 	vision map[Direction][]Coordinates
 }
 
+// Size return the number of visible asteroids
+func (v Vision) Size() int {
+	return len(v.vision)
+}
+
+// NewVision creates a new, empty vision from the given coordinates
 func NewVision(origin Coordinates) *Vision {
 	return &Vision{
 		origin: origin,
@@ -30,6 +40,7 @@ func NewVision(origin Coordinates) *Vision {
 	}
 }
 
+// AddAsteroid add one asteroid to a Vision object
 func (v *Vision) AddAsteroid(asteroid Coordinates) {
 	direction, distance := v.origin.DirectionDistance(asteroid)
 
@@ -42,7 +53,7 @@ func (v *Vision) AddAsteroid(asteroid Coordinates) {
 		return
 	}
 
-	// find the first that is further than the current one
+	// find the first i so that asteroids[i] is further than the current one
 	i := sort.Search(size, func(i int) bool {
 		return v.origin.Distance(asteroids[i]) >= distance
 	})
@@ -50,16 +61,65 @@ func (v *Vision) AddAsteroid(asteroid Coordinates) {
 	if i == size {
 		// not found: add at the end
 		v.vision[direction] = append(asteroids, asteroid)
+	} else if i == 0 {
+		v.vision[direction] = append([]Coordinates{asteroid}, asteroids...)
+	} else {
+		v.vision[direction] = append(append(asteroids[:i-1], asteroid), asteroids[i:]...)
 	}
-	// TODO
 }
 
-func (v Vision) ClockwiseDirections() []Direction {
-	directions := make([]Direction, 0, len(v.vision))
+// ClockDistance returns the distance of the direction as if it were an arm on
+// a clock. This is a float64 that can be used for comparisons.
+func ClockDistance(d Direction) float64 {
+	// https://stackoverflow.com/a/2339510/735926
 
-	// TODO
+	//  -------> x
+	// |
+	// |   ^
+	// V   | top = lowest y's
+	// y
+
+	// The offsets are mostly trial-and-error to get the correct scores around
+	// the clock
+	r := math.Atan2(float64(d.y), float64(d.x)) + math.Pi/2
+	if r >= 0 {
+		return r
+	}
+	return 2*math.Pi + r
+}
+
+// ClockwiseDirections returns all directions from a vision, clockwise
+func (v Vision) ClockwiseDirections() []Direction {
+	directions := make([]Direction, len(v.vision))
+
+	i := 0
+
+	for direction := range v.vision {
+		directions[i] = direction
+		i++
+	}
+
+	sort.Slice(directions, func(i, j int) bool {
+		return ClockDistance(directions[i]) < ClockDistance(directions[j])
+	})
+
+	fmt.Printf("sorted: %+v\n", directions)
 
 	return directions
+}
+
+// LazerTo fires a lazer in some direction to crush an asteroid
+func (v *Vision) LazerTo(d Direction) *Coordinates {
+	vision, ok := v.vision[d]
+	if !ok {
+		return nil
+	}
+
+	coordinates := vision[0]
+
+	v.vision[d] = vision[1:]
+
+	return &coordinates
 }
 
 func gcd(a, b int) int {
@@ -71,6 +131,8 @@ func gcd(a, b int) int {
 	return a
 }
 
+// Distance computes a distance between two coordinates
+// Distances can only be compared on the same direction.
 func (cx Coordinates) Distance(cx2 Coordinates) int {
 	x := cx2.x - cx.x
 	y := cx2.y - cx.y
@@ -84,6 +146,8 @@ func (cx Coordinates) Distance(cx2 Coordinates) int {
 	return factor
 }
 
+// DirectionDistance returns both the direction and the distance between two
+// coordinates
 func (cx Coordinates) DirectionDistance(cx2 Coordinates) (Direction, int) {
 	x := cx2.x - cx.x
 	y := cx2.y - cx.y
@@ -118,7 +182,7 @@ func main() {
 		panic(err)
 	}
 
-	m := make(map[Coordinates]Vision)
+	m := make(map[Coordinates]*Vision)
 
 	y := 0
 	x := 0
@@ -133,22 +197,16 @@ func main() {
 		case '#':
 			m[coordinates] = NewVision(coordinates)
 		}
-		x += 1
+		x++
 	}
 
 	for asteroid1, vision1 := range m {
-		for asteroid2, _ := range m {
+		for asteroid2 := range m {
 			if asteroid1 == asteroid2 {
 				continue
 			}
 
 			vision1.AddAsteroid(asteroid2)
-
-			// fmt.Printf("%v -> %v : direction %v\n",
-			// 	asteroid1, asteroid2, direction)
-
-			// we don't care which asteroid we see, only how many
-			vision1[direction]++
 		}
 	}
 
@@ -156,8 +214,8 @@ func main() {
 	var bestAsteroid Coordinates
 
 	for asteroid, vision := range m {
-		if len(vision) > maxVision {
-			maxVision = len(vision)
+		if vision.Size() > maxVision {
+			maxVision = vision.Size()
 			bestAsteroid = asteroid
 		}
 	}
@@ -169,13 +227,20 @@ func main() {
 	vision := m[bestAsteroid]
 	nth := 0
 
-	for dir := range vision.ClockwiseDirections() {
+	for _, direction := range vision.ClockwiseDirections() {
 		nth++
 
-		if nth == 200 {
-			//
+		crushed := vision.LazerTo(direction)
+
+		if crushed != nil {
+			fmt.Printf("The %dth asteroid to be vaporized is at %v (direction %v)\n",
+				nth, crushed, direction)
+
+			if nth == 200 {
+				fmt.Printf("Solution: %v\n",
+					crushed.x*100+crushed.y)
+				break
+			}
 		}
 	}
-
-	// TODO
 }
