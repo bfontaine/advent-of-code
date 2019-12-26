@@ -5,7 +5,7 @@ different language.
 
 …Well, except all Intcode-related solutions starting from the day 5: since all
 of them are built atop the previous ones, they all reuse the same core in
-Crystal (`common/intcode.cr`) and are thus written in that language.
+Crystal (see `common/intcode.cr`) and are thus in that language.
 
 [2019]: https://adventofcode.com/2019
 
@@ -20,5 +20,5 @@ Crystal (`common/intcode.cr`) and are thus written in that language.
 * [Day 9](./day09): Crystal
 * [Day 10](./day10): Go
 * [Day 11](./day11): Crystal
-* Day 12
+* [Day 12](./day12): Lua
 * [Day 13](./day13): Rexx (part 1) / Crystal (part 2)
