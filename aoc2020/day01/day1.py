@@ -25,11 +25,9 @@ def problem2():
 
     seen2 = {}
 
-    for n1 in numbers:
+    for i, n1 in enumerate(numbers):
         difference = 2020 - n1
-        for n2 in numbers:
-            if n2 <= n1:
-                continue
+        for n2 in numbers[i:]:
             if n2 > difference:
                 break
 
