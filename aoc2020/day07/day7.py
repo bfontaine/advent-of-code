@@ -1,4 +1,6 @@
-from collections import defaultdict
+from collections import defaultdict, Counter
+
+START = "shiny gold"
 
 def read_rules(filename):
     # color -> color -> number
@@ -34,8 +36,7 @@ def problem1(filename):
         for child_bag in child_bags:
             containers[child_bag].add(parent_bag)
 
-    start = "shiny gold"
-    bags = {start, }
+    bags = {START, }
     size = len(bags)
     while True:
         for bag in list(bags):
@@ -47,9 +48,33 @@ def problem1(filename):
 
         size = new_size
 
-    bags.remove(start)
+    bags.remove(START)
     print(len(bags), bags)
 
 
+def problem2(filename):
+    rules = read_rules(filename)
+    # bag -> # of occurrences
+
+    total = 0
+
+    leaves = Counter()
+    leaves[START] = 1
+
+    while True:
+        new_leaves = Counter()
+
+        for bag, count in leaves.items():
+            new_leaves.update({child_bag: n*count for child_bag, n in rules[bag].items()})
+
+        if not new_leaves:
+            break
+
+        total += sum(new_leaves.values())
+        leaves = new_leaves
+
+    print(total)
+
+
 if __name__ == '__main__':
-    problem1("input.txt")
+    problem2("input.txt")
