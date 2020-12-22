@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Dict, Set
+from typing import Dict, Set, Tuple, List
 
 
 def read_food(filename):
@@ -15,7 +15,7 @@ def read_food(filename):
     return food
 
 
-def problem1(food):
+def run(food):
     # ingredient -> occurrences
     ingredients = Counter()
     # allergen -> possible ingredients
@@ -30,13 +30,15 @@ def problem1(food):
             else:
                 allergens[allergen] = set(food_ingredients)
 
+    matched_allergens_ingredients: List[Tuple[str, str]] = []
+
     while allergens:
         for allergen in list(allergens):
             allergen_ingredients = allergens[allergen]
 
             if len(allergen_ingredients) == 1:
                 ingredient = list(allergen_ingredients)[0]
-                print(ingredient, "contains", allergen)
+                matched_allergens_ingredients.append((allergen, ingredient))
                 del ingredients[ingredient]
                 del allergens[allergen]
 
@@ -44,8 +46,11 @@ def problem1(food):
                     if ingredient in allergens[allergen2]:
                         allergens[allergen2].remove(ingredient)
 
-    print(ingredients.keys(), sum(ingredients.values()))
+    print("Problem #1:", sum(ingredients.values()))
+
+    matched_allergens_ingredients.sort()
+    print("Problem #2:", ",".join([ingredient for _, ingredient in matched_allergens_ingredients]))
 
 
 if __name__ == '__main__':
-    problem1(read_food("input.txt"))
+    run(read_food("input.txt"))
