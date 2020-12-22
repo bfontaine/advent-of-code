@@ -54,19 +54,27 @@ def tokenize_operation(s):
 
 """
 homework := expression
-term := <int> | '(' expression ')'
 
 Problem #1:
   expression := term | expression '+' term | expression '*' term
+  term := <int> | '(' expression ')'
 
+Problem #2:
+  expression := sub_expression | expression '*' sub_expression
+  sub_expression := term | sub_expression '+' term
+  term := <int> | '(' expression ')'
 """
 
 
 class Interpreter:
     def __init__(self, tokens, advanced_maths=False):
+        self.advanced_maths = advanced_maths
         self.tokens = list(reversed(tokens))  # to allow .pop()
         self.current_token: Optional[Token] = None
         self.next_token()
+
+        # operations supported at the 'expression' level (lower priority)
+        self._expression_operations = {'STAR', } if self.advanced_maths else {'PLUS', 'STAR'}
 
     def next_token(self):
         if self.tokens:
@@ -76,13 +84,25 @@ class Interpreter:
         print("TOKEN", self.current_token)
 
     def expression(self):
-        total = self.term()
+        total = self.sub_expression()
 
-        while self.current_token.name in {'PLUS', 'STAR'}:
+        while self.current_token.name in self._expression_operations:
             operation = self.current_token
             self.next_token()
-            n2 = self.term()
+            n2 = self.sub_expression()
             total = apply_op(operation, total, n2)
+
+        return total
+
+    def sub_expression(self):
+        total = self.term()
+
+        if not self.advanced_maths:
+            return total
+
+        while self.current_token.name == 'PLUS':
+            self.next_token()
+            total += self.term()
 
         return total
 
@@ -123,4 +143,4 @@ def run(problem, homework):
 
 
 if __name__ == '__main__':
-    run(2, read_homework("sample1.txt"))
+    run(2, read_homework("input.txt"))
