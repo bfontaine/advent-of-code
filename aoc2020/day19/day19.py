@@ -21,14 +21,32 @@ def read_file(filename):
     return parse_rules(rules), messages.strip().splitlines()
 
 
-def resolve_rule(rules, node):
+def resolve_rule(rules, node, problem):
+    if problem == 2:
+        if node == 8:
+            # '8: 42 | 42 8' == one or more of 42
+            return resolve_rule(rules, 42, 2) + "+"
+
+        if node == 11:
+            # '11: 42 31 | 42 11 31' = aa...abb...b where count(a) == count(b)
+            before = resolve_rule(rules, 42, 2)
+            after = resolve_rule(rules, 31, 2)
+
+            resolved_alternatives = []
+
+            # quick and dirty, but it works (longest message = 96 (2*48) chars)
+            for n in range(1, 49):
+                resolved_alternatives.append(before * n + after * n)
+
+            return "(?:%s)" % "|".join(resolved_alternatives)
+
     alternatives = rules[node]
     resolved_alternatives = []
     for alternative in alternatives:
         resolved_alternative = ""
 
         for n in alternative:
-            resolved_alternative += n if isinstance(n, str) else resolve_rule(rules, n)
+            resolved_alternative += n if isinstance(n, str) else resolve_rule(rules, n, problem)
 
         resolved_alternatives.append(resolved_alternative)
 
@@ -41,8 +59,8 @@ def resolve_rule(rules, node):
     return "(?:%s)" % "|".join(resolved_alternatives)
 
 
-def problem1(rules, messages):
-    rule = re.compile("^%s$" % resolve_rule(rules, 0))
+def run(problem, rules, messages):
+    rule = re.compile("^%s$" % resolve_rule(rules, 0, problem))
 
     n = 0
     for message in messages:
@@ -53,4 +71,4 @@ def problem1(rules, messages):
 
 
 if __name__ == '__main__':
-    problem1(*read_file("input.txt"))
+    run(2, *read_file("input.txt"))
