@@ -1,9 +1,6 @@
-from collections import namedtuple, defaultdict, Counter
+from collections import namedtuple, defaultdict
 from functools import reduce
-from typing import Tuple, Sequence, cast
-
-import itertools
-import math
+from typing import Tuple, Sequence
 
 Borders = namedtuple("Borders", ["top", "right", "bottom", "left"])
 
@@ -34,82 +31,32 @@ def reverse_str(s: str):
     return "".join(reversed(s))
 
 
-def rotate_right(borders: Borders) -> Borders:
-    return Borders(
-        reverse_str(borders.left),
-        borders.top,
-        reverse_str(borders.right),
-        borders.bottom,
-    )
-
-
-def vertical_flip(borders: Borders) -> Borders:
-    return Borders(
-        borders.bottom,
-        borders.right,
-        borders.top,
-        borders.left,
-    )
-
-
-def horizontal_flip(borders: Borders) -> Borders:
-    return Borders(
-        borders.top,
-        borders.left,
-        borders.bottom,
-        borders.right,
-    )
-
-
-def tile_borders_permutations(tile_borders: Borders):
-    # "each image tile has been rotated and flipped to a random orientation"
-
-    #   T             L    B    R
-    #  L R -rotate-> B T  R L  T B
-    #   B             R    T    L
-    #   |             |    |    |
-    #  flip----.     ...  ...  ...
-    #   |      |
-    #   B      T
-    #  L R    R L -> ...
-    #   T      B
-    #   |      |
-    #  ...    ...
-    permutations = set()
-
-    permutation = tile_borders
-
-    for _ in range(3):
-        permutation = rotate_right(permutation)
-        permutations.add(permutation)
-        permutations.add(vertical_flip(permutation))
-        permutations.add(horizontal_flip(permutation))
-
-    return permutations
-
-
 def problem1(tiles):
     # Faster than bruteforce everything: try only the corners
+    # This works because the input is nice enough: every possible border matches only twice (between two squares)
 
     matched_borders = defaultdict(set)
 
     for title, tile in tiles:
-        borders_permutations = tile_borders_permutations(get_tile_borders(tile))
-        for borders in borders_permutations:
-            for border in borders:
-                matched_borders[border].add(title)
+        borders = get_tile_borders(tile)
+        for border in borders:
+            # don't even try the rotate/flip thing: adding each border and its reversed version is enough
+            matched_borders[border].add(title)
+            matched_borders[reverse_str(border)].add(title)
 
-    alone = Counter()
+    edges = defaultdict(set)
 
-    for titles in matched_borders.values():
-        if len(titles) == 1:
-            alone[titles.pop()] += 1
+    for border, titles in matched_borders.items():
+        if len(titles) == 2:
+            t1, t2 = list(titles)
+            edges[t1].add(t2)
+            edges[t2].add(t1)
 
-    # values are doubled: 4 = corners, 2 = sides
-    corners = [title for title in alone if alone[title] == 4]
+    corners = [title for title, neighbors in edges.items() if len(neighbors) == 2]
 
-    print(corners, reduce(lambda a, b: a * b, corners, 1))
+    print("Problem #1:", corners, reduce(lambda a, b: a * b, corners, 1))
 
 
 if __name__ == '__main__':
+    problem1(read_tiles("sample.txt"))
     problem1(read_tiles("input.txt"))
