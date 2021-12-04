@@ -6,5 +6,4 @@
 
 ## Problem 2
 
-    make
-    ./day01p2 < input.txt
+    awk -f day01p2.awk < input.txt
