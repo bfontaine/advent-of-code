@@ -1,6 +1,6 @@
 # Advent of code 2021
 
-## Code-golf’d AWK solutions (days 1-3)
+## Code-golf’d AWK solutions
 
 ```awk
 # day 1, problem 1
@@ -15,4 +15,6 @@
 {split($0,s,X);for(i=1;i<=length($0);)b[i]+=s[i++]*2-1}END{for(i in b){x=b[i]>0;g=g*2+x;e=e*2+!x}print g*e}
 # day 3, problem 2
 function r(N,D){i=1;for(s=length(N);s>1;){n=0;for(j=1;j<=s;){n+=substr(N[j++],i,1)*2-1};b=n?D==(n>0):D;S=0;for(j=1;j<=s;j++){if(substr(N[j],i,1)==b){N[S+1]=N[j];S++}};s=S;i++}d=0;split(N[1],B,X);for(j in B){d=d*2+B[j]}return d}{y[i+1]=x[i+1]=$0;i++}END{print r(x,1)*r(y,0)}
+# day 5, problem 1
+{split($0,A,"[, ]");x=A[1];b=A[2];c=A[4];d=A[5];if(x==c||b==d){f=d>=b?1:-1;for(e=c>x?1:-1;x!=c+e;x+=e)for(y=b;y!=d+f;y+=f)if(g[x" "y]++==1)n++}}END{print n}
 ```
