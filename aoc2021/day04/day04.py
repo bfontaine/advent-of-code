@@ -2,6 +2,7 @@
 
 import re
 import sys
+import argparse
 from typing import List, Set
 
 SIZE = 5
@@ -45,15 +46,28 @@ class Board:
 
 
 def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--p2", action="store_true")
+    p2 = p.parse_args().p2
     numbers_string, *board_strings = sys.stdin.read().split("\n\n")
     numbers = (int(n) for n in numbers_string.split(","))
-    boards = [Board.from_string(s) for s in board_strings]
+    # collection with ~O(1) deletion
+    boards = {i: Board.from_string(s) for i, s in enumerate(board_strings)}
 
     for number in numbers:
-        for b in boards:
+        is_last = len(boards) == 1
+
+        for i, b in tuple(boards.items()):
             if b.play(number):
-                print(b.score() * number)
-                return
+                if p2:
+                    if is_last:
+                        print(b.score() * number)
+                        return
+
+                    del boards[i]
+                else:
+                    print(b.score() * number)
+                    return
 
 
 if __name__ == "__main__":
