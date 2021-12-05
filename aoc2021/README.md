@@ -1,6 +1,6 @@
 # Advent of code 2021
 
-## Code-golf’d AWK solutions
+## Code-golf’d AWK solutions (days 1-3)
 
 ```awk
 # day 1, problem 1
