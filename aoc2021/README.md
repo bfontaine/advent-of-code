@@ -19,4 +19,8 @@ function r(N,D){i=1;for(s=length(N);s>1;){n=0;for(j=1;j<=s;){n+=substr(N[j++],i,
 {split($0,A,",| ");x=A[1];y=A[2];a=A[4];b=A[5];X=x==a;Y=y==b;k=X||Y;while(k){n+=g[x" "y]++==1;x==a&&y==b?k=0:0;X?0:x+=(a<x?-1:1);Y?0:y+=(b<y?-1:1)}}END{print n}
 # day 5, problem 2
 {split($0,A,",| ");x=A[1];y=A[2];a=A[4];b=A[5];while(1){n+=g[x" "y]++==1;if(x==a&&y==b)next;x==a?0:x+=(a<x?-1:1);y==b?0:y+=(b<y?-1:1)}}END{print n}
+# day 6, problem 1
+{l=split($0,s,",");for(;d++<80;)for(i in s)s[i]?s[i]--:s[i]=(s[++l]=8)-2;print l}
+# day 6, problem 2
+{t=split($0,s,",");for(i in s){S[s[i]]++};for(d=0;d<256;d++){S[7]+=N=S[0];S[0]=0;for(i=1;i<9;i++){S[i-1]=S[i];S[i]=0};t+=S[8]=N}print t}
 ```
