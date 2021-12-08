@@ -14,7 +14,7 @@ p<(p=$1){n++}END{print n-1}
 # day 3, problem 1
 {l=split($0,s,X);for(i=1;i<=l;)b[i]+=s[i++]*2-1}END{for(i in b){x=b[i]>0;g=g*2+x;e=e*2+!x}print g*e}
 # day 3, problem 2
-function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;)n+=substr(N[j++],i,1)*2-1;b=n?D==(n>0):D;S=0;for(j=1;j<=s;j++)substr(N[j],i,1)==b?N[++S]=N[j]:0;s=S;i++}d=0;split(N[1],B,X);for(j in B){d=d*2+B[j]}return d}{y[J+1]=x[++J]=$0}END{print r(x,1)*r(y,0)}
+function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;)n+=substr(N[j++],i,1)*2-1;b=n?D==(n>0):D;S=0;for(j=1;j<=s;j++)substr(N[j],i,1)==b?N[++S]=N[j]:0;s=S;i++}d=0;split(N[1],B,X);for(j in B)d=d*2+B[j];return d}{y[J+1]=x[++J]=$0}END{print r(x,1)*r(y,0)}
 # day 5, problem 1
 {split($0,A,",| ");x=A[1];y=A[2];a=A[4];b=A[5];X=x==a;Y=y==b;k=X||Y;while(k){n+=g[x" "y]++==1;x==a&&y==b?k=0:0;X?0:x+=(a>x)*2-1;Y?0:y+=(b>y)*2-1}}END{print n}
 # day 5, problem 2
