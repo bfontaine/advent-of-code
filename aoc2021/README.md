@@ -25,4 +25,6 @@ function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;){n+=substr(N[j++],i,1)*2-1};
 {t=split($0,s,",");for(i in s){S[s[i]]++};for(d=0;d<256;d++){S[7]+=N=S[0];for(i=0;i<9;i++){S[i-1]=S[i];S[i]=0};t+=S[8]=N}print t}
 # day 7, problem 1
 {l=split($0,c,",");asort(c);for(i in c)f+=sqrt((c[i]-(l%2?c[(l+1)/2]:(c[l/2]+c[l/2+1])/2))^2);print f}
+# day 7, problem 2
+{split($0,C,",");for(i in C)m=C[i]>m?C[i]:m;for(;x<=m;x++){s=0;for(i in C)s+=(n=(n=C[i]-x)<0?-n:n)*(n+1);!b||s<b?b=s:0}print b/2}
 ```
