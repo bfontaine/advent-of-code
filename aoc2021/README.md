@@ -4,7 +4,7 @@
 
 ```awk
 # day 1, problem 1
-{if($1>p)n++;p=$1}END{print n-1}
+p<(p=$1){n++}END{print n-1}
 # day 1, problem 2
 {b[++c%4]=$0;n+=(c>3&&$0>b[(c+1)%4])}END{print n}
 # day 2, problem 1
