@@ -29,4 +29,6 @@ function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;)n+=substr(N[j++],i,1)*2-1;b=
 {split($0,C,",");for(i in C)m=C[i]>m?C[i]:m;for(;x++<=m;){s=0;for(i in C)s+=(n=(n=C[i]-x)<0?-n:n)*(n+1);!b||s<b?b=s:0}print b/2}
 # day 8, problem 1
 {for(i=NF-3;i<=NF;i++)n+=(l=length($i))>1&&l<5||l==7}END{print n}
+# day 9, problem 1
+{l=split($0,R,X);for(i=1;i<=l;i++){G[i" "NR]=R[i]+1}}END{for(y=1;y<=FNR;y++)for(x=1;x<=l;x++){h=G[x" "y];o=1;for(z=y-1;z<y+2;z++)for(w=x-1;w<x+2;w++)(j=G[w" "z])&&(w!=x||z!=y)&&j<=h?o=0:0;S+=h*o}print S}
 ```
