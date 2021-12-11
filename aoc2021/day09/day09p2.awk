@@ -18,20 +18,17 @@
     bassin_top = State[i]
 
     if (bassin_left) {
+      State[i] = bassin_left
+      Bassins[bassin_left]++
+
       if (bassin_top && bassin_top != bassin_left) {
-        # merge bassins: top wins
-        Bassins[bassin_top] += Bassins[bassin_left]
-        delete Bassins[bassin_left]
-        Bassins[bassin_top] += 1
-        for (j=i;State[j];j--) {
-          State[j] = bassin_top
-        }
+        # merge bassins: left wins
+        Bassins[bassin_left] += Bassins[bassin_top]
+        delete Bassins[bassin_top]
         continue
       }
 
       # only left: inherit
-      State[i] = bassin_left
-      Bassins[bassin_left]++
       continue
     }
 
