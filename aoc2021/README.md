@@ -32,7 +32,7 @@ function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;)n+=substr(N[j++],i,1)*2-1;b=
 # day 9, problem 1
 {l=split($0,R,X);for(i=1;i<=l;i++){G[i" "NR]=R[i]+1}}END{for(y=1;y<=FNR;y++)for(x=1;x<=l;x++){h=G[x" "y];o=1;for(z=y-1;z<y+2;z++)for(w=x-1;w<x+2;w++)(j=G[w" "z])&&(w!=x||z!=y)&&j<=h?o=0:0;S+=h*o}print S}
 # day 9, problem 2
-{l=split($0,R,X);for(i=1;i<=l;i++)if(R[i]>8)S[i]=0;else{T=S[i];if(L=S[i-1]){if(T&&T!=L){B[T]+=B[L]+1;B[L]=0;for(j=i;S[j];)S[j--]=T}else B[S[i]=L]++}else T?B[T]++:B[S[i]=++N]++}}END{asort(B);print B[l=length(B)]*B[l-1]*B[l-2]}
+{split($0,R,X);for(i in R)R[i]>8?S[i]=0:(1+(T=S[i])&&(L=S[i-1])&&++B[S[i]=L])?((T&&T!=L&&B[L]+=B[T])?B[T]=0:0):T?B[T]++:B[S[i]=++N]++}END{asort(B);print B[l=length(B)]*B[l-1]*B[l-2]}
 # day 10, problem 1
 {T=s=0;E["("]=")";E["{"]="}";E["["]="]";E["<"]=">";split($0,L,X);for(i in L)if(e=E[c=L[i]])S[++T]=e;else if(S[T--]!=c){C+=c==")"?3:c=="]"?57:c=="}"?1197:25137;next}}END{print C}
 # day 10, problem 2

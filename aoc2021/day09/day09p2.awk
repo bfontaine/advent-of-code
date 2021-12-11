@@ -25,7 +25,6 @@
         # merge bassins: left wins
         Bassins[bassin_left] += Bassins[bassin_top]
         delete Bassins[bassin_top]
-        continue
       }
 
       # only left: inherit
