@@ -8,6 +8,12 @@
   axis = substr($0, idx-1, 1)
   value = int(substr($0, idx+1))
 
+  if (axis == "x") {
+    MaxX = value
+  } else {
+    MaxY = value
+  }
+
   for (s in Grid) {
     delete Grid[s]
     split(s, xy, ",")
@@ -23,8 +29,21 @@
   }
 }
 END {
-  for (s in Grid) {
-    N++
+  if (p) {
+    for (s in Grid) N++
+    print N
+    exit
   }
-  print N
+
+  for (y=0; y<=MaxY; y++) {
+    for (x=0; x<=MaxX; x++) {
+      if (Grid[x","y]) {
+        N++
+        printf "#"
+      } else {
+        printf "."
+      }
+    }
+    print ""
+  }
 }

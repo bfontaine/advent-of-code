@@ -39,4 +39,6 @@ function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;)n+=substr(N[j++],i,1)*2-1;b=
 {T=s=0;E["("]=")";E["{"]="}";E["["]="]";E["<"]=">";split($0,L,X);for(i in L)if(e=E[c=L[i]])S[++T]=e;else if(S[T--]!=c)next;for(i=T;i;)s=s*5+index(")]}>",S[i--]);C[++N]=s}END{asort(C);print C[(N+1)/2]}
 # day 13, problem 1
 /,/{G[$0]=1}/=/{if(++F<2){split($3,A,"=");a=A[1]=="x";for(s in G){split(s,X,",");x=X[1];y=X[2];x>(v=A[2])&&a?x=2*v-x:!a&&y>v?y=2*v-y:0;G[s]=0;G[x","y]=1}for(s in G)N+=G[s];print N}}
+# day 13, problem 2
+/,/{G[$0]=1}/=/{split($3,A,"=");V=A[2];for(s in G){G[s]=0;split(s,C,",");x=C[1];y=C[2];A[1]=="x"?(x>(M=V)?x=2*V-x:0):y>(N=V)?y=2*V-y:0;G[x","y]=1}}END{for(z=0;z<=N;z++){for(x=0;x<=M;)printf G[x++","z]?"#":FS;print""}}
 ```
