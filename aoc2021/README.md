@@ -2,6 +2,8 @@
 
 ## Code-golf’d AWK solutions
 
+Here are only the solutions that would fit in a tweet (≤280 characters).
+
 ```awk
 # day 1, problem 1
 p<(p=$1){n++}END{print n-1}
@@ -41,8 +43,5 @@ function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;)n+=substr(N[j++],i,1)*2-1;b=
 /,/{G[$0]=1}/=/{if(++F<2){split($3,A,"=");a=A[1]=="x";for(s in G){split(s,X,",");x=X[1];y=X[2];x>(v=A[2])&&a?x=2*v-x:!a&&y>v?y=2*v-y:0;G[s]=0;G[x","y]=1}for(s in G)N+=G[s];print N}}
 # day 13, problem 2
 /,/{G[$0]=1}/=/{split($3,A,"=");V=A[2];for(s in G){G[s]=0;split(s,C,",");x=C[1];y=C[2];A[1]=="x"?(x>(M=V)?x=2*V-x:0):y>(N=V)?y=2*V-y:0;G[x","y]=1}}END{for(z=0;z<=N;z++){for(x=0;x<=M;)printf G[x++","z]?"#":FS;print""}}
-# day 14, problem 1
-{if(NR<2)for(i=1;i<length($0);){P[substr($0,i++,2)]++}else if(x=$0){p=substr(x,1,1);q=substr(x,2,1);r=substr(x,7);R[p q]=p r","r q}}END{for(;s++<10;){split("",W);for(p in P)if(r=R[p]){split(r,N,",");W[N[1]]+=P[p];W[N[2]]+=P[p];delete P[p]}for(p in W)P[p]+=W[p]}for(p in P){n=P[p];split(p,Q,X);C[Q[1]]+=n;C[Q[2]]+=n}for(p in C)(n=(n=C[p])%2?(n-1)/2+1:n/2)>M?M=n:!K||n<K?K=n:0;print M-K}
-# day 14, problem 2
-{if(NR<2)for(i=1;i<length($0);){P[substr($0,i++,2)]++}else if(x=$0){p=substr(x,1,1);q=substr(x,2,1);r=substr(x,7);R[p q]=p r","r q}}END{for(;s++<40;){split("",W);for(p in P)if(r=R[p]){split(r,N,",");W[N[1]]+=P[p];W[N[2]]+=P[p];delete P[p]}for(p in W)P[p]+=W[p]}for(p in P){n=P[p];split(p,Q,X);C[Q[1]]+=n;C[Q[2]]+=n}for(p in C)(n=(n=C[p])%2?(n-1)/2+1:n/2)>M?M=n:!K||n<K?K=n:0;print M-K}
+# day 14, problems 1 and 2: too long
 ```
