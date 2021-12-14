@@ -6,7 +6,8 @@
 }
 END {
   Height = NR
-  for (step=0; step<100; step++) {
+  Size = Height * Width
+  while (++step) {
       #for (y=1; y<=Height; y++) {
       #  for (x=1; x<=Width; x++) {
       #    printf Grid[x, y]
@@ -20,6 +21,7 @@ END {
 
     split("", Flashed, X)
     touched = 1
+    prev_flashes = flashes
 
     while (touched) {
       touched = 0
@@ -47,7 +49,14 @@ END {
     for (c in Flashed) {
       Grid[c] = 0
     }
+
+    if (p == 1) {
+      if (step==100) break
+    } else if (flashes - prev_flashes == Size) {
+      print step
+      break
+    }
   }
 
-  print flashes
+  if (p == 1) print flashes
 }
