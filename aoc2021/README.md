@@ -30,7 +30,7 @@ function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;)n+=substr(N[j++],i,1)*2-1;b=
 # day 7, problem 2
 {split($0,C,",");for(i in C)m=C[i]>m?C[i]:m;for(;x++<=m;){s=0;for(i in C)s+=(n=(n=C[i]-x)<0?-n:n)*(n+1);!b||s<b?b=s:0}print b/2}
 # day 8, problem 1
-{for(i=NF-3;i<=NF;i++)n+=(l=length($i))>1&&l<5||l==7}END{print n}
+{for(i=12;i<16;i++)n+=(l=length($i))>1&&l<5||l==7}END{print n}
 # day 9, problem 1
 {split($0,R,X);for(i in R){G[i" "NR]=R[i]+1}}END{for(y=1;y<=FNR;y++)for(x in R){h=G[x" "y];o=1;for(z=y-1;z<y+2;z++)for(w=x-1;w<x+2;w++)(j=G[w" "z])&&(w!=x||z!=y)&&j<=h?o=0:0;S+=h*o}print S}
 # day 9, problem 2
@@ -46,4 +46,6 @@ function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;)n+=substr(N[j++],i,1)*2-1;b=
 # day 13, problem 2
 /,/{G[$0]=1}/=/{split($3,A,"=");V=A[2];for(s in G){G[s]=0;split(s,C,",");x=C[1];y=C[2];A[1]=="x"?(x>(M=V)?x=2*V-x:0):y>(N=V)?y=2*V-y:0;G[x","y]=1}}END{for(z=0;z<=N;z++){for(x=0;x<=M;)printf G[x++","z]?"#":FS;print""}}
 # day 14, problems 1 and 2: too long
+# day 15, problem 1
+{split($0,R,X);NR<2?R[1]=-1:0;for(i in R){f=S[i-1];S[i]=((t=S[i])&&t<f?t:f?f:t)+R[i]}}END{print S[i]+1}
 ```
