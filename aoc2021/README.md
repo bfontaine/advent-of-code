@@ -48,4 +48,5 @@ function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;)n+=substr(N[j++],i,1)*2-1;b=
 # day 14, problems 1 and 2: too long
 # day 15, problem 1
 {split($0,R,X);NR<2?R[1]=-1:0;for(i in R){f=S[i-1];S[i]=((t=S[i])&&t<f?t:f?f:t)+R[i]}}END{print S[i]+1}
+# day 15, problem 2: too long
 ```

@@ -2,4 +2,8 @@
 
 ## Problem 1
 
-    awk -f day14.awk < input.txt
+    awk -f day15p1.awk < input.txt
+
+## Problem 2
+
+    awk -f day15p2.awk < input.txt
