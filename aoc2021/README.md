@@ -44,9 +44,9 @@ function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;)n+=substr(N[j++],i,1)*2-1;b=
 # day 12, problem 1
 function f(n,v,N,s){if(n=="end")R=1;else{S[n]?v=v V n V:0;split(E[n],N,V);for(i in N)if(n!=(m=N[i])&&m&&!index(v,V m V)){f(m,v);s+=R}R=s}}{V="-";split($0,N,V);for(i in N){S[n]=tolower(n=N[i])==n;E[n]=E[n]V N[1]V N[2]V}}END{f("start");print R}
 # day 13, problem 1
-/,/{G[$0]=1}/=/{if(++F<2){split($3,A,"=");a=A[1]=="x";for(s in G){split(s,X,",");x=X[1];y=X[2];x>(v=A[2])&&a?x=2*v-x:!a&&y>v?y=2*v-y:0;G[s]=0;G[x","y]=1}for(s in G)N+=G[s];print N}}
+/,/{G[$0]}/=/{if(++F<2){split($3,A,"=");a=A[1]=="x";for(s in G){split(s,X,",");x=X[1];y=X[2];x>(v=A[2])&&a?x=2*v-x:!a&&y>v?y=2*v-y:0;G[s]=0;G[x","y]=1}for(s in G)N+=G[s];print N}}
 # day 13, problem 2
-/,/{G[$0]=1}/=/{split($3,A,"=");V=A[2];for(s in G){G[s]=0;split(s,C,",");x=C[1];y=C[2];A[1]=="x"?(x>(M=V)?x=2*V-x:0):y>(N=V)?y=2*V-y:0;G[x","y]=1}}END{for(z=0;z<=N;z++){for(x=0;x<=M;)printf G[x++","z]?"#":FS;print""}}
+/,/{G[$0]}/=/{split($3,A,"=");V=A[2];for(s in G){G[s]=0;split(s,C,",");x=C[1];y=C[2];A[1]=="x"?(x>(M=V)?x=2*V-x:0):y>(N=V)?y=2*V-y:0;G[x","y]=1}}END{for(z=0;z<=N;z++){for(x=0;x<=M;)printf G[x++","z]?"#":FS;print""}}
 # day 14, problems 1 and 2: too long
 # day 15, problem 1
 {split($0,R,X);NR<2?R[1]=-1:0;for(i in R){f=S[i-1];S[i]=((t=S[i])&&t<f?t:f?f:t)+R[i]}}END{print S[i]+1}
