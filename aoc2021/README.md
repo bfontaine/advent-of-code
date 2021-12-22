@@ -41,6 +41,8 @@ function r(N,D){i=1;for(s=J;s>1;){n=0;for(j=1;j<=s;)n+=substr(N[j++],i,1)*2-1;b=
 {T=s=0;E["("]=")";E["{"]="}";E["["]="]";E["<"]=">";split($0,L,X);for(i in L)if(e=E[c=L[i]])S[++T]=e;else if(S[T--]!=c)next;for(i=T;i;)s=s*5+index(")]}>",S[i--]);C[++N]=s}END{asort(C);print C[(N+1)/2]}
 # day 11, problem 1
 {W=split($0,r,X);for(i in r)G[i,NR]=r[i]}END{for(;s++<100;){for(c in G)G[c]++;split(X,F,X);T=1;while(T){;T=0;for(y=1;y<=NR;y++)for(x=1;x<=W;x++)if(!((x,y)in F)&&G[x,y]>9){F[x,y]=T=++H;for(Y=y-1;Y<y+2;Y++)for(X=x-1;X<x+2;)G[X++,Y]++}}for(c in F)G[c]=0}print H}
+# day 12, problem 1
+function f(n,v,N,s){if(n=="end")R=1;else{S[n]?v=v V n V:0;split(E[n],N,V);for(i in N)if(n!=(m=N[i])&&m&&!index(v,V m V)){f(m,v);s+=R}R=s}}{V="-";split($0,N,V);for(i in N){S[n]=tolower(n=N[i])==n;E[n]=E[n]V N[1]V N[2]V}}END{f("start");print R}
 # day 13, problem 1
 /,/{G[$0]=1}/=/{if(++F<2){split($3,A,"=");a=A[1]=="x";for(s in G){split(s,X,",");x=X[1];y=X[2];x>(v=A[2])&&a?x=2*v-x:!a&&y>v?y=2*v-y:0;G[s]=0;G[x","y]=1}for(s in G)N+=G[s];print N}}
 # day 13, problem 2
