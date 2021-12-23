@@ -52,5 +52,5 @@ function f(n,v,N,s){if(n=="end")R=1;else{S[n]?v=v V n V:0;split(E[n],N,V);for(i 
 {split($0,R,X);NR<2?R[1]=-1:0;for(i in R){f=S[i-1];S[i]=((t=S[i])&&t<f?t:f?f:t)+R[i]}}END{print S[i]+1}
 # day 15, problem 2: too long
 # day 22, problem 1
-{W=51;split($2,P,"[.,xyz=]+");for(x=P[2];x<=P[3]&&x>-W&&x<W;x++)for(y=P[4];y<=P[5]&&y>-W&&y<W;y++)for(z=P[6];z<=P[7]&&z>-W&&z<W;z++)if(C[x,y,z]||$1!="on")delete C[x,y,z]}END{print length(C)}
+{W=2501;split($2,P,"[.,xyz=]+");for(x=P[2];x<=P[3]&&x**2<W;x++)for(y=P[4];y<=P[5]&&y**2<W;y++)for(z=P[6];z<=P[7]&&z**2<W;z++)if(C[x,y,z]||$1!="on")delete C[x,y,z]}END{print length(C)}
 ```
