@@ -1,5 +1,8 @@
 # Advent of code 2021
 
+This year, I’m trying to solve as many problems as I can using AWK. I might fallback on Python or
+another language if needed.
+
 ## Code-golf’d AWK solutions
 
 Here are only the solutions that would fit in a tweet (≤280 characters).
