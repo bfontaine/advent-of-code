@@ -72,7 +72,11 @@ function f(n,v,N,s){if(n=="end")R=1;else{S[n]?v=v V n V:0;split(E[n],N,V);for(i 
 {split($0,R,X);NR<2?R[1]=-1:0;for(i in R){f=S[i-1];S[i]=((t=S[i])&&t<f?t:f?f:t)+R[i]}}END{print S[i]+1}
 # day 15, problem 2: >280 chars
 
-# day 16, 17, 18, 19, 20, 21: TODO
+# day 16, 17, 18, 19, 20: TODO
+
+# day 21, problem 1
+{P[$2]=$5}END{for(i=1;S[1]<1000&&S[2]<1000;i=i>1?1:2)S[i]+=(P[i]=(P[i]+ ++d+ ++d+ ++d)%10)?P[i]:P[i]=10;print S[i]*d}
+# day 21, problem 2: TODO
 
 # day 22, problem 1
 {W=2501;split($2,P,"[.,xyz=]+");for(x=P[2];x<=P[3]&&x**2<W;x++)for(y=P[4];y<=P[5]&&y**2<W;y++)for(z=P[6];z<=P[7]&&z**2<W;z++)if(C[x,y,z]||$1!="on")delete C[x,y,z]}END{print length(C)}
