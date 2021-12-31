@@ -86,4 +86,8 @@ function f(n,v,N,s){if(n=="end")R=1;else{S[n]?v=v V n V:0;split(E[n],N,V);for(i 
 # day 23, problem 2: TODO
 
 # day 24: solved by hand
+
+# day 25, problem 1
+{A="@";W=split($0,R,"");for(x in R)R[x]!="."?G[x A NR]=R[x]==">":0};END{H=NR;M=1;while(M){M=0;for(t=1;t>=0;t--){for(s in G){;split(s,C,A);x=C[1];y=C[2];(v=G[s])?++x>W?x-=W:0:++y>H?y-=H:0;z=x A y;v!=t||z in G?z=s:M=1;J[z]=v};split(X,G);for(s in J)G[s]=J[s];split(X,J)}T++}print T}
+# day 25, problem 2: TODO
 ```
