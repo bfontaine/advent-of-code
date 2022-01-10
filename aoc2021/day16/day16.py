@@ -1,11 +1,24 @@
-# -*- coding: UTF-8 -*-
-
 import sys
+import math
 from typing import Tuple
+
+
+OPS = {
+    0: sum,
+    1: math.prod,
+    2: min,
+    3: max,
+    5: lambda pp: int(pp[0] > pp[1]),
+    6: lambda pp: int(pp[0] < pp[1]),
+    7: lambda pp: int(pp[0] == pp[1]),
+}
 
 class Packet:
     def __init__(self, version):
         self.version = version
+
+    def value(self):
+        raise NotImplementedError()
 
     def versions_sum(self):
         return self.version
@@ -14,19 +27,26 @@ class Packet:
 class LitteralPacket(Packet):
     def __init__(self, version, value):
         super().__init__(version)
-        self.value = value
+        self._value = value
+
+    def value(self):
+        return self._value
 
     def __repr__(self):
         return f"LP({self.version}):" + str(self.value)
 
 
 class OperatorPacket(Packet):
-    def __init__(self, version):
+    def __init__(self, version, type_id):
         super().__init__(version)
+        self.type_id = type_id
         self.subpackets = []
 
     def versions_sum(self):
         return self.version + sum(p.versions_sum() for p in self.subpackets)
+
+    def value(self):
+        return OPS[self.type_id]([p.value() for p in self.subpackets])
 
     def __repr__(self):
         return f"OP({self.version}):" + repr(self.subpackets)
@@ -38,18 +58,11 @@ def parse_packet(b: str, start=0, end=-1) -> Tuple[Packet, int]:
     elif end > len(b):
         raise RuntimeError("end>len(b): " + str(end) + " > " + str(len(b)))
 
-    # print("parsing", end - start)
-    # print(b[:25])
-    # print("VVVTTTI" + "L" * 15)
-    #print(" " * start + "^" * (end - start))
-
     size = end - start
 
     version = int(b[start:start+3], 2)
     type_id = int(b[start+3:start+6], 2)
     last_bit = end
-
-    # print("type id", type_id)
 
     if type_id == 4:
         bits = ""
@@ -62,28 +75,21 @@ def parse_packet(b: str, start=0, end=-1) -> Tuple[Packet, int]:
                 break
 
         n = int(bits, 2)
-        # print("litteral", n, "last bit", last_bit)
         return LitteralPacket(version, n), last_bit
 
-    # 011 010 0 01010
-    # VVV TTT I LLLL....
-    # 012 345 6
-    p = OperatorPacket(version)
+    p = OperatorPacket(version, type_id)
 
     length_type_id = b[start+6]
     if length_type_id == "0":
-        # print(" " * (start+7) + b[start+7:start+7+15])
 
         subpackets_length = int(b[start+7:start+7+15], 2)
-        # print(subpackets_length, len(b))
         next_packet_index = start + 7 + 15
         max_index = next_packet_index + subpackets_length
 
         while next_packet_index < max_index:
             subpacket, next_packet_index = parse_packet(b, next_packet_index, max_index)
             p.subpackets.append(subpacket)
-            # print(next_packet_index, max_index)
-        return p, next_packet_index # maybe off-by-one error?
+        return p, next_packet_index
 
     else:
         subpackets_count = int(b[start+7:start+7+11], 2)
@@ -107,8 +113,8 @@ def main():
 
     p, _ = parse_packet(b)
 
-    # print(p)
-    print(p.versions_sum())
+    print("Part 1:", p.versions_sum())
+    print("Part 2:", p.value())
 
 
 if __name__ == "__main__":
