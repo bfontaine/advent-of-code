@@ -72,7 +72,14 @@ function f(n,v,N,s){if(n=="end")R=1;else{S[n]?v=v V n V:0;split(E[n],N,V);for(i 
 {split($0,R,X);NR<2?R[1]=-1:0;for(i in R){f=S[i-1];S[i]=((t=S[i])&&t<f?t:f?f:t)+R[i]}}END{print S[i]+1}
 # day 15, problem 2: >280 chars
 
-# day 16, 17, 18, 19, 20: TODO
+# day 16: Python
+
+# day 17, problem 1
+{split($3,X,"[.=,]");split($4,Y,"[.=]");for(w=(a=X[2])<0?a:0;w<=(b=X[4]);w++)for(z=c=Y[2];z<1000;z++){x=y=h=0;V=w;for(Z=z;x<=b&&y>=c;){y>h?h=y:0;if(a<=x&&Y[4]>=y){h>H?H=h:0;break}x+=V;y+=Z--;V+=V>0?-1:V<0?1:0}}print H}
+# day 17, problem 2
+{split($3,X,"[.=,]");split($4,Y,"[.=]");for(w=(a=X[2])<0?a:0;w<=(b=X[4]);w++)for(z=c=Y[2];z<1000;z++){x=y=0;V=w;for(Z=z;x<=b&&y>=c;){if(a<=x&&Y[4]>=y){N++;break}x+=V;y+=Z--;V+=V>0?-1:V<0?1:0}}print N}
+
+# day 18, 19, 20: TODO
 
 # day 21, problem 1
 {P[$2]=$5}END{for(i=1;S[1]<1000&&S[2]<1000;i=i>1?1:2)S[i]+=(P[i]=(P[i]+ ++d+ ++d+ ++d)%10)?P[i]:P[i]=10;print S[i]*d}
