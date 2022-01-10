@@ -23,6 +23,7 @@
     # if x1 <= x and y2 >= y
 
     highest_of_all = 0
+    n = 0
 
     min_xv1 = 0
     if (x1 < 0)
@@ -59,9 +60,11 @@
         }
         if (ok) {
           highest > highest_of_all ? highest_of_all = highest : 0
+          n++
         }
       }
     }
 
     print highest_of_all
+    print n
 }

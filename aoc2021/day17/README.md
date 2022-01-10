@@ -1,5 +1,5 @@
 # Day 17
 
-## Part 1
+    awk -f day17.awk < input.txt
 
-    awk -f day17p1.awk < input.txt
+The program prints both solutions one after the other.
