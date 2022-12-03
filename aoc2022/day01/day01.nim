@@ -1,22 +1,13 @@
-import os
-import std/algorithm
-import strutils
+from std/algorithm import sort, SortOrder
+from strutils import parseInt
 
-if paramCount() != 2:
-  stderr.writeLine("Usage: <program> <problem number> <input file>")
-  quit(QuitFailure)
+from "../base.nim" import problemParams
 
-let problemNumber = parseInt(paramStr(1))
-let inputFile = paramStr(2)
-
-if problemNumber != 1 and problemNumber != 2:
-  stderr.writeLine("Problem number must be 1 or 2")
-  quit(QuitFailure)
-
+let params = problemParams()
 var currentElf = 0
 var elves = newSeq[int](0)
 
-for line in lines inputFile:
+for line in lines params.inputFile:
   if line == "":
     elves.add(currentElf)
     currentElf = 0
@@ -28,7 +19,7 @@ if currentElf != 0:
 
 elves.sort(order=SortOrder.Descending)
 
-if problemNumber == 1:
+if params.problemNumber == 1:
   echo elves[0]
 else:
   echo elves[0] + elves[1] + elves[2]

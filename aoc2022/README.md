@@ -3,6 +3,13 @@
 This year, I’m using the Advent of code to learn [Nim](https://nim-lang.org/). Expect ugly or non-idiomatic code at the
 beginning.
 
+## Usage:
+
+All programs have the same interface:
+
+    nim compile --run dayXX.nim 1 input.txt
+    nim compile --run dayXX.nim 2 input.txt
+
 ## Resources
 
 * [Learn Nim in Y Minutes](https://learnxinyminutes.com/docs/nim/)
