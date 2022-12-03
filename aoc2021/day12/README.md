@@ -2,4 +2,4 @@
 
 ## Problem 1
 
-    awk -f day12p1.awk < input.txt
+    awk -f day12.awk < input.txt

@@ -3,7 +3,7 @@ function addEdge(n1, n2) {
   else Edges[n1] = n2
 }
 
-function count_distinct_paths(node, visited     , next_node, next_nodes, sum) {
+function count_distinct_paths(node, visited, ok2   , next_node, next_nodes, sum) {
   if (node == "end") {
     return 1
   }
@@ -18,10 +18,11 @@ function count_distinct_paths(node, visited     , next_node, next_nodes, sum) {
     next_node = next_nodes[i]
 
     if (index(visited, " " next_node " ")) {
-      continue
+      if (ok2 == next_node) { ok2 = "" }
+      else continue
     }
 
-    sum += count_distinct_paths(next_node, visited)
+    sum += count_distinct_paths(next_node, visited, ok2)
   }
 
   return sum
@@ -50,5 +51,18 @@ END {
   #   }
   # }
 
-  print count_distinct_paths("start")
+  if (p == 1)
+    print count_distinct_paths("start")
+  else {
+    total = 0
+    for (n in Small) {
+      if (n != "start" && n != "end")
+        # XXX there might be paths that are counted twice; once with ok2=a and
+        # once with ok2=a
+        # maybe try to do it in one single call to count_distinct_paths
+        total += count_distinct_paths("start", X, ok2)
+    }
+    # total += count_distinct_paths("start")
+    print total
+  }
 }
