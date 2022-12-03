@@ -1,6 +1,6 @@
 from strutils import split
 
-from "../base.nim" import problemParams
+from "../base.nim" import params
 
 discard """
 > A for Rock, B for Paper, and C for Scissors
@@ -44,7 +44,6 @@ proc parseResult(x: string): Result =
   # here we use the fact that results have the same values as shapes
   parseShape(x)
 
-let params = problemParams()
 var totalScore = 0
 
 proc score1(opponent: string, you: string): int =

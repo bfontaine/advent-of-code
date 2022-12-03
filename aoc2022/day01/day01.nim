@@ -1,9 +1,8 @@
 from std/algorithm import sort, SortOrder
 from strutils import parseInt
 
-from "../base.nim" import problemParams
+from "../base.nim" import params
 
-let params = problemParams()
 var currentElf = 0
 var elves = newSeq[int](0)
 
