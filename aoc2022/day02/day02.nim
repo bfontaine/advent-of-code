@@ -12,6 +12,7 @@ discard """
 """
 
 type Shape = int8
+type Result = int8
 
 const
   # Add 1 here since we removed 1 from the Rock/Paper/Scissors values
@@ -23,6 +24,10 @@ const
   Paper: Shape = 1
   Scissors: Shape = 2
 
+  # > X means you need to lose, Y means you need to end the round in a draw, and Z means you need to win.
+  Loss: Result = 0
+  Draw: Result = 1
+  Win: Result = 2
 
 proc parseShape(x: string): Shape =
   case x
@@ -35,7 +40,14 @@ proc parseShape(x: string): Shape =
   else:
     assert false
 
-proc score(opponent: string, you: string): int =
+proc parseResult(x: string): Result =
+  # here we use the fact that results have the same values as shapes
+  parseShape(x)
+
+let params = problemParams()
+var totalScore = 0
+
+proc score1(opponent: string, you: string): int =
   let
     opponentShape = parseShape(opponent)
     yourShape = parseShape(you)
@@ -46,13 +58,27 @@ proc score(opponent: string, you: string): int =
     return yourShape + WinScore
   return yourShape + LossScore
 
+proc score2(opponent: string, you: string): int =
+  let
+    opponentShape = parseShape(opponent)
+    result = parseResult(you)
 
-let params = problemParams()
-var totalScore = 0
+  case result
+  of Win:
+    return (opponentShape+1) mod 3 + WinScore
+  of Draw:
+    return opponentShape + DrawScore
+  of Loss:
+    return (opponentShape+2) mod 3 + LossScore
+  else:
+    assert false
 
-for line in lines params.inputFile:
+proc lineScore(line: string): int =
   let words = line.split(" ")
   assert len(words) == 2
-  totalScore += score(words[0], words[1])
+  return (if params.problemNumber == 1: score1 else: score2)(words[0], words[1])
+
+for line in lines params.inputFile:
+  totalScore += lineScore(line)
 
 echo(totalScore)
