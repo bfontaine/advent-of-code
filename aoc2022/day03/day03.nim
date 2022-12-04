@@ -1,5 +1,5 @@
 import std/sets
-from "../base.nim" import params
+from "../base.nim" import problemParams
 
 type RuckSack = HashSet[char]
 
@@ -9,9 +9,9 @@ proc priority(c: char): int =
   # A (65) .. Z -> 27 .. 52
   return codePoint - (if codePoint >= 97: 96 else: 38)
 
-var totalPriority = 0
-
+let params = problemParams()
 var
+  totalPriority = 0
   rucksacks: array[0..2, RuckSack]
   ruckSackIndex = 0
 

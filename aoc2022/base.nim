@@ -16,5 +16,3 @@ proc problemParams*(): ProblemParams =
     quit(QuitFailure)
 
   return (problemNumber: problemNumber, inputFile: inputFile)
-
-let params* = problemParams()

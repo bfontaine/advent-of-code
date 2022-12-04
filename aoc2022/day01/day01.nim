@@ -1,10 +1,12 @@
 from std/algorithm import sort, SortOrder
 from strutils import parseInt
 
-from "../base.nim" import params
+from "../base.nim" import problemParams
 
-var currentElf = 0
-var elves = newSeq[int](0)
+let params = problemParams()
+var
+  currentElf = 0
+  elves = newSeq[int](0)
 
 for line in lines params.inputFile:
   if line == "":

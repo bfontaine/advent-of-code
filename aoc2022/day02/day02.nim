@@ -1,6 +1,6 @@
 from strutils import split
 
-from "../base.nim" import params
+from "../base.nim" import problemParams
 
 discard """
 > A for Rock, B for Paper, and C for Scissors
@@ -11,8 +11,9 @@ discard """
 > (0 if you lost, 3 if the round was a draw, and 6 if you won).
 """
 
-type Shape = int8
-type Result = int8
+type
+  Shape = int8
+  Result = int8
 
 const
   # Add 1 here since we removed 1 from the Rock/Paper/Scissors values
@@ -44,8 +45,6 @@ proc parseResult(x: string): Result =
   # here we use the fact that results have the same values as shapes
   parseShape(x)
 
-var totalScore = 0
-
 proc score1(opponent: string, you: string): int =
   let
     opponentShape = parseShape(opponent)
@@ -72,10 +71,14 @@ proc score2(opponent: string, you: string): int =
   else:
     assert false
 
+let params = problemParams()
+
 proc lineScore(line: string): int =
   let words = line.split(" ")
   assert len(words) == 2
   return (if params.problemNumber == 1: score1 else: score2)(words[0], words[1])
+
+var totalScore = 0
 
 for line in lines params.inputFile:
   totalScore += lineScore(line)
