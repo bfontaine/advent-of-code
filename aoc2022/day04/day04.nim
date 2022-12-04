@@ -13,7 +13,9 @@ for line in lines params.inputFile:
     if pair1[0] <= pair2[0] and pair2[1] <= pair1[1] or
        pair2[0] <= pair1[0] and pair1[1] <= pair2[1]:
       fully_contained_pairs += 1
-  # else:
-  #   if pair1[0] <= pair2[0] and pair1[1]
+  else:
+    if pair1[0] <= pair2[0] and pair2[0] <= pair1[1] or
+       pair2[0] <= pair1[0] and pair1[0] <= pair2[1]:
+      fully_contained_pairs += 1
 
 echo(fully_contained_pairs)
