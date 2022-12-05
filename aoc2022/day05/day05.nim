@@ -45,7 +45,7 @@ if isMainModule:
               stackTo = stacks[posTo-1]
             let topCranes = stackFrom[^craneCount..^1]
             stacks[posFrom-1] = stackFrom[0..^(craneCount+1)]
-            stacks[posTo-1] = stacks[posTo-1].concat(topCranes)
+            stacks[posTo-1] = stackTo.concat(topCranes)
 
           #for stack in stacks:
           #  echo stack
