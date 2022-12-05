@@ -59,8 +59,6 @@ if isMainModule:
           #echo stack
         stacksParsing = false
 
-  # would probably be more efficient building a seq and then join,
-  # or use a string builder if Nim has one
   var tops = ""
   for stack in stacks:
     tops &= stack[stack.high]
