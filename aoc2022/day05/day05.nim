@@ -1,5 +1,6 @@
 from std/algorithm import reverse
 from std/strscans import scanf
+from sequtils import concat
 from "../base.nim" import problemParams
 
 if isMainModule:
@@ -33,12 +34,21 @@ if isMainModule:
           #   stackFrom = stacks[posFrom-1]
           #   stackTo = stacks[posTo-1]
 
-          for _ in 0..<craneCount:
-            let topCrane = stacks[posFrom-1][^1]
-            stacks[posTo-1].add(topCrane)
-            stacks[posFrom-1].delete(stacks[posFrom-1].high)
-            #for stack in stacks:
-            #  echo stack
+          if params.problemNumber == 1:
+            for _ in 0..<craneCount:
+              let topCrane = stacks[posFrom-1][^1]
+              stacks[posTo-1].add(topCrane)
+              stacks[posFrom-1].delete(stacks[posFrom-1].high)
+          else:
+            var
+              stackFrom = stacks[posFrom-1]
+              stackTo = stacks[posTo-1]
+            let topCranes = stackFrom[^craneCount..^1]
+            stacks[posFrom-1] = stackFrom[0..^(craneCount+1)]
+            stacks[posTo-1] = stacks[posTo-1].concat(topCranes)
+
+          #for stack in stacks:
+          #  echo stack
         else:
           continue
     else:
