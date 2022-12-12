@@ -4,6 +4,12 @@ import algorithm
 import std/strutils
 from "../base.nim" import problemParams
 
+let
+  totalDiskSpace =  70000000
+  neededDiskSpace = 30000000
+
+type Sizes = Table[string, int]
+
 func joinPath(path: seq[string]): string =
   return path.join("/")
 
@@ -12,7 +18,7 @@ func joinPath(path: seq[string], trailing: string): string =
     return trailing
   return path.join("/") & "/" & trailing
 
-func getSizes(lines: seq[string]): int =
+func getSizes(lines: seq[string]): Sizes =
   var
     parentDirs = initTable[string, string]()
     sizes = initTable[string, int]()
@@ -64,6 +70,9 @@ func getSizes(lines: seq[string]): int =
       let parent = parentDirs[dir]
       sizes[parent] += sizes[dir]
 
+  return sizes
+
+func getTotalSmallDirectoriesSize(sizes: Sizes): int =
   var totalSize = 0
 
   for size in sizes.values:
@@ -72,6 +81,21 @@ func getSizes(lines: seq[string]): int =
 
   return totalSize
 
+proc getDeletableDirectorySize(sizes: Sizes): int =
+  let
+    usedSpace = sizes[""]
+    unusedSpace = totalDiskSpace - usedSpace
+    spaceToFree = neededDiskSpace - unusedSpace
+
+  var
+    smallestSize = totalDiskSpace
+
+  for size in sizes.values:
+    if size >= spaceToFree and size < smallestSize:
+      smallestSize = size
+
+  return smallestSize
+
 
 proc linesSeq(filename: string): seq[string] =
   var s: seq[string]
@@ -79,9 +103,12 @@ proc linesSeq(filename: string): seq[string] =
     s.add(line)
   return s
 
-
 if isMainModule:
   let
     params = problemParams()
+    sizes = getSizes(linesSeq(params.inputFile))
 
-  echo(getSizes(linesSeq(params.inputFile)))
+  if params.problemNumber == 1:
+    echo(getTotalSmallDirectoriesSize(sizes))
+  else:
+    echo(getDeletableDirectorySize(sizes))
