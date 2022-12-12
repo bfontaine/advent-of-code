@@ -13,6 +13,7 @@ method add(self: PacketScanner, packet: char) =
   self.index = (self.index + 1) mod self.size
 
 method unique(self: PacketScanner): bool =
+  # This method could be made more performant but it's fine for our scale
   var s: set[char]
   for c in self.buffer:
     if c in s:
@@ -20,8 +21,8 @@ method unique(self: PacketScanner): bool =
     s.incl(c)
   return true
 
-func startPacketPosition*(signal: string): int =
-  var ps = PacketScanner(size: 4)
+func startPacketPosition*(signal: string, size: int): int =
+  var ps = PacketScanner(size: size)
   for i, c in signal:
     ps.add(c)
     if i >= 3 and ps.unique():
@@ -34,4 +35,4 @@ if isMainModule:
     params = problemParams()
     signal = readFile(params.inputFile)
 
-  echo(startPacketPosition(signal))
+  echo(startPacketPosition(signal, if params.problemNumber == 1: 4 else: 14))
