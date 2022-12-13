@@ -4,7 +4,9 @@ import std/strutils
 import tables
 from "../base.nim" import problemParams
 
-type Coord* = tuple[y: int, x: int]
+type
+  Coord* = tuple[y: int, x: int]
+  Rope* = seq[Coord]
 
 let
   directions = {
@@ -40,6 +42,12 @@ func moveTail*(head: Coord, tail: Coord): Coord =
     tail.x + getOffset(head.x, tail.x)
   )
 
+
+proc moveRopeKnots*(rope: var Rope) =
+  for i in 0 .. rope.high-1:
+    rope[i+1] = moveTail(rope[i], rope[i+1])
+
+
 iterator parseLines(lines: seq[string]): (char, int) =
   var
     direction_string: string
@@ -54,26 +62,31 @@ iterator parseLines(lines: seq[string]): (char, int) =
     yield (direction, steps)
 
 
-proc problem1*(lines: seq[string]): int =
+proc problemX(lines: seq[string], length: int): int =
   var
-    head = (y: 0, x: 0)
-    tail = (y: 0, x: 0)
+    rope = newSeq[Coord](length)
     tailPositions = initHashSet[Coord]()
 
-  tailPositions.incl(tail)
+  for i in 0 .. length-1:
+    rope[i] = (y: 0, x: 0)
+
+  tailPositions.incl(rope[rope.high])
 
   for direction, steps in parseLines(lines):
     for _ in 1 .. steps:
-      head = applyDirection(head, direction)
-
-      tail = moveTail(head, tail)
-      tailPositions.incl(tail)
+      rope[0] = applyDirection(rope[0], direction)
+      moveRopeKnots(rope)
+      tailPositions.incl(rope[rope.high])
 
   return len(tailPositions)
 
 
+proc problem1*(lines: seq[string]): int =
+  return problemX(lines, 2)
+
+
 proc problem2*(lines: seq[string]): int =
-  42 # TODO
+  return problemX(lines, 10)
 
 
 if isMainModule:

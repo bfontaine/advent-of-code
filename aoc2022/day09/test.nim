@@ -12,6 +12,7 @@ let sampleLines = @[
   "R 2",
 ]
 
+
 test "applyDirection":
   check(applyDirection((3, 3), 'U') == (2, 3))
   check(applyDirection((3, 3), 'D') == (4, 3))
@@ -71,8 +72,56 @@ test "moveTail":
           check( distance(head, tail2) <= distance(head, tail1) )
 
 
+test "moveRopeKnots":
+  var rope: Rope
+
+  # All knots on the same position: no movement
+  rope = @[(0, 0)]
+  for _ in 0 .. 10:
+    rope.add((0, 0))
+    let rope1 = rope
+    moveRopeKnots(rope)
+    check(rope == rope1)
+
+  # idem but with all tail-knots touching the head
+  for y in -1 .. 1:
+    for x in -1 .. 1:
+      rope = @[(y, x)]
+      for _ in 0 .. 10:
+        rope.add((0, 0))
+        let rope1 = rope
+        moveRopeKnots(rope)
+        check(rope == rope1)
+
+  rope = @[
+    (2, 2),
+    (0, 0),
+    (0, 0),
+    (0, 0),
+  ]
+  moveRopeKnots(rope)
+  check(rope == @[
+    (2, 2),
+    (1, 1),
+    (0, 0),
+    (0, 0),
+  ])
+
+
 test "problem1 sample":
   check(problem1(sampleLines) == 13)
 
-test "problem2 sample":
-  check(problem2(sampleLines) == 36)
+test "problem2 sample 1":
+  check(problem2(sampleLines) == 1)
+
+test "problem2 sample 2":
+  check(problem2(@[
+    "R 5",
+    "U 8",
+    "L 8",
+    "D 3",
+    "R 17",
+    "D 10",
+    "L 25",
+    "U 20",
+  ]) == 36)
