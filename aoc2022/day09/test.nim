@@ -1,5 +1,16 @@
 import std/unittest
-from day09 import applyDirection, moveTail, getOffset, isTouching, Coord
+import day09
+
+let sampleLines = @[
+  "R 4",
+  "U 4",
+  "L 3",
+  "D 1",
+  "R 4",
+  "D 1",
+  "L 5",
+  "R 2",
+]
 
 test "applyDirection":
   check(applyDirection((3, 3), 'U') == (2, 3))
@@ -58,3 +69,10 @@ test "moveTail":
             tail2 = moveTail(head, tail1)
 
           check( distance(head, tail2) <= distance(head, tail1) )
+
+
+test "problem1 sample":
+  check(problem1(sampleLines) == 13)
+
+test "problem2 sample":
+  check(problem2(sampleLines) == 36)

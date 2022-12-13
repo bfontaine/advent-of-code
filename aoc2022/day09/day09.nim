@@ -1,5 +1,6 @@
 import std/sets
 import std/strscans
+import std/strutils
 import tables
 from "../base.nim" import problemParams
 
@@ -39,29 +40,46 @@ func moveTail*(head: Coord, tail: Coord): Coord =
     tail.x + getOffset(head.x, tail.x)
   )
 
-
-if isMainModule:
-  let
-    params = problemParams()
-
+iterator parseLines(lines: seq[string]): (char, int) =
   var
     direction_string: string
-    direction: char
     steps: int
+    direction: char
+
+  for line in lines:
+    if line == "":
+      break
+    assert scanf(line, "$w $i", direction_string, steps) # $c doesn't work
+    direction = direction_string[0]
+    yield (direction, steps)
+
+
+proc problem1*(lines: seq[string]): int =
+  var
     head = (y: 0, x: 0)
     tail = (y: 0, x: 0)
     tailPositions = initHashSet[Coord]()
 
   tailPositions.incl(tail)
 
-  for line in lines params.inputFile:
-    assert scanf(line, "$w $i", direction_string, steps) # $c doesn't work
-    direction = direction_string[0]
-
+  for direction, steps in parseLines(lines):
     for _ in 1 .. steps:
       head = applyDirection(head, direction)
 
       tail = moveTail(head, tail)
       tailPositions.incl(tail)
 
-  echo(len(tailPositions))
+  return len(tailPositions)
+
+
+proc problem2*(lines: seq[string]): int =
+  42 # TODO
+
+
+if isMainModule:
+  let
+    params = problemParams()
+    lines = readFile(params.inputFile).splitLines
+
+  let fn = if params.problemNumber == 1: problem1 else: problem2
+  echo(fn(lines))
