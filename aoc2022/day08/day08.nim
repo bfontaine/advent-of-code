@@ -42,7 +42,63 @@ func problem1(grid: seq[seq[int]], height: int, width: int): int =
 
 
 func problem2(grid: seq[seq[int]], height: int, width: int): int =
-  42  # TODO
+  var
+    highestScenicScore = 0
+    scenicScore: int
+    tree: int
+    view: int
+
+  # very bad time complexity but the input is small
+  for y in 0 .. height-1:
+    for x in 0 .. width-1:
+      tree = grid[y][x]
+      scenicScore = 1
+
+      # This code would be a lot more easier to read/write if we had some sort
+      # of 'takeWhile', e.g.:
+      #
+      #   ->> countdown(y-1, 0)
+      #       takeWhile( y => grid[y][x] > tree )
+      #       count
+
+      # top
+      view = 0
+      for y1 in countdown(y-1, 0):
+        view += 1
+        if grid[y1][x] >= tree:
+          break
+      scenicScore *= view
+
+      # bottom
+      view = 0
+      for y1 in countup(y+1, height-1):
+        view += 1
+        if grid[y1][x] >= tree:
+          break
+      scenicScore *= view
+
+      # left
+      view = 0
+      for x1 in countdown(x-1, 0):
+        view += 1
+        if grid[y][x1] >= tree:
+          break
+      scenicScore *= view
+
+      # right
+      view = 0
+      for x1 in countup(x+1, width-1):
+        view += 1
+        if grid[y][x1] >= tree:
+          break
+      scenicScore *= view
+
+      if scenicScore > highestScenicScore:
+        highestScenicScore = scenicScore
+
+  # 5762400 is too high
+  # 196 is too low
+  return highestScenicScore
 
 
 if isMainModule:
