@@ -28,11 +28,7 @@ iterator run*(lines: seq[string]): (int, int) =
 func interestingCycle(cycle: int): bool =
   return (cycle-20) mod 40 == 0 and cycle <= 220
 
-if isMainModule:
-  let
-    params = problemParams()
-    lines = readFile(params.inputFile).splitLines
-
+proc problem1(lines: seq[string]) =
   var signal = 0
 
   for cycle, register in run(lines):
@@ -40,3 +36,29 @@ if isMainModule:
       signal += cycle*register
 
   echo(signal)
+
+proc problem2(lines: seq[string]) =
+  var
+    row = ""
+    i = 0
+
+  for cycle, register in run(lines):
+    let lit = abs(register - i) <= 1
+    row &= (if lit: "#" else: " ")
+    i += 1
+    if cycle mod 40 == 0:
+      echo(row)
+      i = 0
+      row = ""
+
+    if cycle == 240:
+      break
+
+
+if isMainModule:
+  let
+    params = problemParams()
+    lines = readFile(params.inputFile).splitLines
+    fn = if params.problemNumber == 1: problem1 else: problem2
+
+  fn(lines)
