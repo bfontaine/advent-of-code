@@ -27,5 +27,6 @@ def test_grid():
 def test_problem1_examples():
     assert_examples(day03.problem1)
 
-# def test_problem2_examples():
-#     assert_examples(day03.problem2)
+
+def test_problem2_examples():
+    assert_examples(day03.problem2)

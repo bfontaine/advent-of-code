@@ -1,8 +1,11 @@
-from typing import Tuple, List
+from collections import defaultdict
+from typing import Tuple, List, Dict, Set
 
 from pydantic import BaseModel
 
 import aoc
+
+XY = Tuple[int, int]
 
 
 class Item(BaseModel):
@@ -31,7 +34,7 @@ class Grid(BaseModel):
             text=s.replace("\n", ""),
         )
 
-    def __getitem__(self, xy: Tuple[int, int]):
+    def __getitem__(self, xy: XY):
         x, y = xy
         i = y * self.width + x
         return self.text[i]
@@ -66,7 +69,6 @@ class Grid(BaseModel):
 
 
 def problem1(text: str):
-    s = 0
     grid = Grid.from_string(text)
 
     numbers, symbols = grid.get_numbers_and_symbols()
@@ -87,5 +89,40 @@ def problem1(text: str):
     return s
 
 
+def problem2(text: str):
+    grid = Grid.from_string(text)
+
+    numbers, symbols = grid.get_numbers_and_symbols()
+
+    potential_gear_coordinates = set(
+        (s.x, s.y)
+        for s in symbols
+        if s.value == "*"
+    )
+
+    # (gear_x, gear_y) -> [n, n, ...]
+    gears_numbers: Dict[XY, List[int]] = defaultdict(list)
+
+    s = 0
+    for number in numbers:
+        x1 = number.x
+        x2 = number.x + len(str(number.value))
+        y = number.y
+
+        for y1 in (y - 1, y, y + 1):
+            for x in range(x1 - 1, x2 + 1):
+                if (x, y1) in potential_gear_coordinates:
+                    gears_numbers[x, y1].append(number.value)
+
+    for gear_numbers in gears_numbers.values():
+        if len(gear_numbers) != 2:
+            continue
+
+        gear_ratio = gear_numbers[0] * gear_numbers[1]
+        s += gear_ratio
+
+    return s
+
+
 if __name__ == '__main__':
-    aoc.run(problem1)
+    aoc.run(problem1, problem2)
