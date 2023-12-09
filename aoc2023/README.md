@@ -1,8 +1,20 @@
 # Advent of code 2023
 
-## Config
+## Setup
+
+    poetry install
+
+### Config
 
 ```
 AOC_SESSION=...
 AOC_YEAR=2023
 ```
+
+## Run
+
+    poetry run python dayXX.py [1|2]
+
+## Tests
+
+    poetry run pytest
