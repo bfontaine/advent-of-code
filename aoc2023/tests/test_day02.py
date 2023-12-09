@@ -25,3 +25,7 @@ def test_game_from_string(line, expected):
 
 def test_problem1_examples():
     assert_examples(day02.problem1)
+
+
+def test_problem2_examples():
+    assert_examples(day02.problem2)

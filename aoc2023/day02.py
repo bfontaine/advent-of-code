@@ -23,6 +23,12 @@ class ColorSelection(BaseModel):
             and self.red <= selection.red \
             and self.green <= selection.green
 
+    def power(self):
+        """
+        > The power of a set of cubes is equal to the numbers of red, green, and blue cubes multiplied together.
+        """
+        return self.blue * self.red * self.green
+
 
 class Game(BaseModel):
     n: int
@@ -38,9 +44,22 @@ class Game(BaseModel):
         )
 
     def possible_with(self, selection: ColorSelection):
+        """
+        Test if the game would have been possible with the given selection of colors.
+        """
         return all(
             record.subset_of(selection)
             for record in self.records
+        )
+
+    def minimal_selection(self):
+        """
+        Return the minimal selection for which this game would have been possible.
+        """
+        return ColorSelection(
+            blue=max(r.blue for r in self.records),
+            red=max(r.red for r in self.records),
+            green=max(r.green for r in self.records),
         )
 
 
@@ -56,5 +75,14 @@ def problem1(text: str):
     return s
 
 
+def problem2(text: str):
+    s = 0
+    for line in text.splitlines():
+        game = Game.from_string(line)
+        s += game.minimal_selection().power()
+
+    return s
+
+
 if __name__ == '__main__':
-    aoc.run(problem1)
+    aoc.run(problem1, problem2)

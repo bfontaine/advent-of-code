@@ -46,10 +46,11 @@ def problem(p: int, text: str):
     return s
 
 
-def main(p: int):
-    s = problem(p=p, text=aoc.get_input_data(1))
-    print(s)
+def problem1(text: str): return problem(1, text)
+
+
+def problem2(text: str): return problem(2, text)
 
 
 if __name__ == '__main__':
-    main(p=2)
+    aoc.run(problem1, problem2)

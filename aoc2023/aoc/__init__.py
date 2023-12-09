@@ -1,3 +1,4 @@
+import argparse
 import re
 import traceback
 from datetime import date
@@ -15,6 +16,8 @@ __all__ = [
 load_dotenv()
 
 YEAR = int(environ.get("AOC_YEAR") or date.today().year)
+
+Solution = Callable[[str], Any]
 
 
 def get_day():
@@ -39,7 +42,7 @@ def get_input_data():
     return aocd.get_data(day=day, year=year)
 
 
-def assert_examples(fn: Callable[[str], Any],
+def assert_examples(fn: Solution,
                     problem: Optional[int] = None,
                     examples: Optional[Iterable[int]] = None):
     if problem is None:
@@ -60,9 +63,27 @@ def assert_examples(fn: Callable[[str], Any],
 
         expected_response = example.answers[problem - 1]
         actual_response = str(fn(example.input_data))
+        print(example.answers, example.answer_b)
         assert actual_response == expected_response, \
-            f"Sample #{i + 1}: expected {expected_response}, got {actual_response}"
+            f"Problem #{problem}, sample #{i + 1}: expected {expected_response}, got {actual_response}"
 
 
-def run(fn: Callable[[str], Any]):
-    print(fn(get_input_data()))
+def run(solution1: Solution, solution2: Optional[Solution] = None):
+    p = argparse.ArgumentParser()
+    p.add_argument("problem", type=int, nargs="?", choices=(1, 2), metavar="PROBLEM")
+    opts = p.parse_args()
+    problem = opts.problem
+
+    input_data = get_input_data()
+
+    if not problem or problem == 1:
+        print("Problem #1:", solution1(input_data))
+
+    if not solution2:
+        if problem == 2:
+            raise RuntimeError("Solution 2 is not implemented")
+
+        return
+
+    if not problem or problem == 2:
+        print("Problem #2:", solution2(input_data))
