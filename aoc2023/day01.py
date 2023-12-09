@@ -1,5 +1,7 @@
 import re
 
+import aoc
+
 DIGITS = {
     s: i + 1
     for i, s in enumerate([
@@ -35,16 +37,19 @@ def get_line_calibration_value(line: str, p: int):
     return first_n * 10 + last_n
 
 
-def main(p: int):
+def problem(p: int, text: str):
     s = 0
-    with open("input.txt") as f:
-        for line in f:
-            n = get_line_calibration_value(line, p=p)
-            s += n
+    for line in text.splitlines():
+        n = get_line_calibration_value(line, p=p)
+        s += n
 
+    return s
+
+
+def main(p: int):
+    s = problem(p=p, text=aoc.get_input_data(1))
     print(s)
 
 
 if __name__ == '__main__':
-    # 54807 = too low
     main(p=2)

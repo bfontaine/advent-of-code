@@ -1,6 +1,12 @@
 import pytest
 
-from day01 import get_line_calibration_value
+import day01
+from aoc import assert_examples
+
+
+def test_problem1_examples():
+    assert_examples(day=1, problem=1, fn=lambda s: day01.problem(1, s),
+                    examples={0,})
 
 
 @pytest.mark.parametrize("line,p,expected", [
@@ -11,4 +17,4 @@ from day01 import get_line_calibration_value
     ("twone", 2, 21),
 ])
 def test_get_line_calibration_value(line, p, expected):
-    assert get_line_calibration_value(line, p=p) == expected
+    assert day01.get_line_calibration_value(line, p=p) == expected
