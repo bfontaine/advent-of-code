@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 advent-of-code-data = "^2.0.1"
 python-dotenv = "^1.0.0"
+pydantic = "^2.5.2"
 
 
 [tool.poetry.group.dev.dependencies]
