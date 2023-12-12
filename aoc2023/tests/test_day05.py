@@ -2,7 +2,7 @@ import day05
 from aoc import assert_examples
 
 
-def test_category_map_add_range_from_string_and_convert():
+def test_category_map():
     cm = day05.CategoryMap()
     assert cm.convert(42) == 42
     cm.add_range_from_string("50 98 2")
