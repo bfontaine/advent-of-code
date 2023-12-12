@@ -21,8 +21,6 @@ def test_grid():
     assert g[5, 1] == "*"
     assert g[0, 2] == "4"
 
-    print(repr(g.text[7 + 5:]))
-
 
 def test_problem1_examples():
     assert_examples(day03.problem1)

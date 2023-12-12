@@ -11,6 +11,7 @@ from aocd.models import Puzzle
 
 __all__ = [
     "get_input_data", "run",
+    "get_puzzle",
     "refresh_examples",
     "assert_examples",
 ]
@@ -75,7 +76,6 @@ def assert_examples(fn: Solution,
 
         expected_response = example.answers[problem - 1]
         actual_response = str(fn(example.input_data))
-        print(example.answers, example.answer_b)
         assert actual_response == expected_response, \
             f"Problem #{problem}, sample #{i + 1}: expected {expected_response}, got {actual_response}"
 
