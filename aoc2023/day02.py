@@ -1,11 +1,11 @@
+from dataclasses import dataclass
 from typing import List
-
-from pydantic import BaseModel
 
 import aoc
 
 
-class ColorSelection(BaseModel):
+@dataclass
+class ColorSelection:
     blue: int = 0
     red: int = 0
     green: int = 0
@@ -30,7 +30,8 @@ class ColorSelection(BaseModel):
         return self.blue * self.red * self.green
 
 
-class Game(BaseModel):
+@dataclass
+class Game:
     n: int
     records: List[ColorSelection]
 

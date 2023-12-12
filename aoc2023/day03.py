@@ -1,27 +1,30 @@
 from collections import defaultdict
-from typing import Tuple, List, Dict, Set
-
-from pydantic import BaseModel
+from dataclasses import dataclass
+from typing import Tuple, List, Dict
 
 import aoc
 
 XY = Tuple[int, int]
 
 
-class Item(BaseModel):
+@dataclass
+class Item:
     x: int
     y: int
 
 
+@dataclass
 class Number(Item):
     value: int
 
 
+@dataclass
 class Symbol(Item):
     value: str
 
 
-class Grid(BaseModel):
+@dataclass
+class Grid:
     text: str
     height: int
     width: int
