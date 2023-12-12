@@ -10,7 +10,9 @@ import aocd
 from aocd.models import Puzzle
 
 __all__ = [
-    "get_input_data", "assert_examples", "run",
+    "get_input_data", "run",
+    "refresh_examples",
+    "assert_examples",
 ]
 
 load_dotenv()
@@ -37,9 +39,20 @@ def get_day_and_year():
     return get_day(), YEAR
 
 
+def get_puzzle():
+    day, year = get_day_and_year()
+    return Puzzle(year=year, day=day)
+
+
 def get_input_data():
     day, year = get_day_and_year()
     return aocd.get_data(day=day, year=year)
+
+
+def refresh_examples():
+    # https://github.com/wimglenn/advent-of-code-data/issues/133#issuecomment-1848840478
+    puzzle = get_puzzle()
+    puzzle.prose0_path.unlink(missing_ok=True)
 
 
 def assert_examples(fn: Solution,
@@ -55,8 +68,7 @@ def assert_examples(fn: Solution,
 
     example_indexes: Set[int] = set(examples) if examples else set()
 
-    day, year = get_day_and_year()
-    puzzle = Puzzle(year=year, day=day)
+    puzzle = get_puzzle()
     for i, example in enumerate(puzzle.examples):
         if example_indexes and i not in example_indexes:
             continue
@@ -70,9 +82,16 @@ def assert_examples(fn: Solution,
 
 def run(solution1: Solution, solution2: Optional[Solution] = None):
     p = argparse.ArgumentParser()
-    p.add_argument("problem", type=int, nargs="?", choices=(1, 2), metavar="PROBLEM")
+    p.add_argument("--refresh-examples", "-r", action="store_true",
+                   help="Invalidate the cache used for the examples and exit.")
+    p.add_argument("problem", type=int, nargs="?", choices=(1, 2), metavar="PROBLEM",
+                   help="Run only the specified problem.")
     opts = p.parse_args()
     problem = opts.problem
+
+    if opts.refresh_examples:
+        refresh_examples()
+        return
 
     input_data = get_input_data()
 
