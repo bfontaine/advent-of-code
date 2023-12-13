@@ -9,43 +9,32 @@ class Race:
     record_distance: int
 
     def possible_wins(self):
-        wins = 0
-        for n in range(1, self.time):
+        n = 0
+        for n in range(self.time + 1):
             if n * (self.time - n) > self.record_distance:
-                wins += 1
+                break
 
-        return wins
-
-
-"""
-0 <= X <= T
-
-R = record distance
-
-distance = (T - X) * X
-
-distance = (T - 0) * 0
-    ->
-distance = (T - T) * T
-
-0 * T
-1 * (T-1)
-2 * (T-3)
-...
-T * (T-T)
-"""
+        return (self.time - n) - n + 1
 
 
-def parse_races(text: str):
+def parse_ints(line: str, ignore_spaces=False):
+    line = line.split(":", 1)[1].strip()
+    if ignore_spaces:
+        line = line.replace(" ", "")
+
+    return [int(n) for n in line.split()]
+
+
+def parse_races(text: str, ignore_spaces=False):
     times, record_distances = [
-        [int(n) for n in line.split(":", 1)[1].strip().split()]
+        parse_ints(line, ignore_spaces=ignore_spaces)
         for line in text.splitlines(keepends=False)
     ]
     return [Race(time, distance) for time, distance in zip(times, record_distances)]
 
 
-def problem1(text: str):
-    races = parse_races(text)
+def get_wins_score(text: str, ignore_spaces=False):
+    races = parse_races(text, ignore_spaces)
 
     wins_score = races[0].possible_wins()
     for race in races[1:]:
@@ -54,8 +43,12 @@ def problem1(text: str):
     return wins_score
 
 
+def problem1(text: str):
+    return get_wins_score(text)
+
+
 def problem2(text: str):
-    raise NotImplementedError()
+    return get_wins_score(text, ignore_spaces=True)
 
 
 if __name__ == '__main__':
