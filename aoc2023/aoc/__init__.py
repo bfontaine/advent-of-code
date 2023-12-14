@@ -1,6 +1,7 @@
 import argparse
 import re
 import traceback
+import warnings
 from datetime import date
 from os import environ
 from typing import Any, Callable, Set, Optional, Iterable
@@ -75,6 +76,10 @@ def assert_examples(fn: Solution,
             continue
 
         expected_response = example.answers[problem - 1]
+        if expected_response is None:
+            warnings.warn(f"Problem #{problem}, sample #{i + 1}: expected response is None")
+            continue
+
         actual_response = str(fn(example.input_data))
         assert actual_response == expected_response, \
             f"Problem #{problem}, sample #{i + 1}: expected {expected_response}, got {actual_response}"
