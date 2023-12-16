@@ -17,4 +17,5 @@ AOC_YEAR=2023
 
 ## Tests
 
+    poetry run mypy day*.py
     poetry run pytest
