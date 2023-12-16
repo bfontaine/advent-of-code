@@ -36,6 +36,20 @@ def extrapolate(history: History) -> int:
     return sum(seq[-1] for seq in seqs)
 
 
+def extrapolate_backward(history: History) -> int:
+    seqs = differences_sequences(history)
+
+    n = seqs[0][0]
+    for i, seq in enumerate(seqs):
+        if i == 0:
+            continue
+
+        # + even, - odd
+        n += (-1 if i % 2 == 1 else 1) * seq[0]
+
+    return n
+
+
 def problem1(text: str):
     histories = parse_histories(text)
 
@@ -48,7 +62,14 @@ def problem1(text: str):
 
 
 def problem2(text: str):
-    raise NotImplementedError()
+    histories = parse_histories(text)
+
+    extrapolated_total = 0
+
+    for history in histories:
+        extrapolated_total += extrapolate_backward(history)
+
+    return extrapolated_total
 
 
 if __name__ == '__main__':
