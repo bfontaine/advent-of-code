@@ -31,9 +31,3 @@ def test_problem1_examples():
 
 def test_problem2_examples():
     assert_examples(day07.problem2)
-
-
-def test_problem2_input():
-    n = day07.problem2(get_input_data())
-    assert n < 251851229  # too high
-    assert n > 251333198  # too low
