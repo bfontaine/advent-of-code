@@ -10,11 +10,14 @@ from dotenv import load_dotenv
 import aocd
 from aocd.models import Puzzle
 
+from .display import colored_text, c
+
 __all__ = [
     "get_input_data", "run",
     "get_puzzle",
     "refresh_examples",
     "assert_examples",
+    "colored_text", "c",
 ]
 
 load_dotenv()

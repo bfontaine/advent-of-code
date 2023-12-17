@@ -9,11 +9,14 @@ readme = "README.md"
 python = "^3.11"
 advent-of-code-data = "^2.0.1"
 python-dotenv = "^1.0.0"
+colorama = "^0.4.6"
+clj = "^0.3.1"
 
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
 mypy = "^1.7.1"
+types-colorama = "^0.4.15.12"
 
 [build-system]
 requires = ["poetry-core"]
