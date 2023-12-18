@@ -2,7 +2,7 @@ import clj
 import pytest
 
 from day10 import problem1, problem2, Position, Map, STARTING_TILE, GROUND, Orientation, NORTH, WEST, EAST, SOUTH
-from aoc import assert_examples, get_input_data
+from aoc import assert_examples
 
 
 @pytest.fixture()
