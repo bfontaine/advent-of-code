@@ -35,17 +35,11 @@ class Record:
         return len(self.conditions)
 
     @classmethod
-    def from_string(cls, s: str, unfold=False):
-        """
-        :param s:
-        :param unfold: if True, 'unfold' the record as instructed but only with a factor of 2, not 5.
-        :return:
-        """
+    def from_string(cls, s: str, folds=1):
         conditions_str, groups_str = s.split(" ", 1)
 
-        if unfold:
-            conditions_str = "?".join([conditions_str] * 2)
-            groups_str = ",".join([groups_str] * 2)
+        conditions_str = "?".join([conditions_str] * folds)
+        groups_str = ",".join([groups_str] * folds)
 
         return cls(
             conditions=conditions_str,
@@ -188,7 +182,8 @@ class Record:
 
         return True
 
-    def _count_possible_arrangements(self, possible_group_positions: List[List[int]]) -> int:
+    def count_possible_arrangements(self) -> int:
+        possible_group_positions = self.get_possible_group_positions()
         total = 0
 
         # print(possible_group_positions)
@@ -197,10 +192,6 @@ class Record:
                 total += 1
 
         return total
-
-    def count_possible_arrangements(self) -> int:
-        possible_group_positions = self.get_possible_group_positions()
-        return self._count_possible_arrangements(possible_group_positions)
 
 
 def problem1(text: str):
@@ -215,63 +206,11 @@ def problem1(text: str):
 def problem2(text: str):
     total = 0
 
-    """
-    examples                 folds=1   f2     f3         f4          f5
-    ???.### 1,1,3               1       1      1          1           1
-    .??..??...?##. 1,1,3        4      32    256        ...       [1684]
-    ?#?#?#?#?#?#?#? 1,3,1,6     1       1      1          1           1
-    ????.#...#... 4,1,1         1       2      4          8         [16]
-    ????.######..#####. 1,6,5   4      20    100        500       [2500]
-    ?###???????? 3,2,1         10     150  (2250?)   (33750?)   [506250]
-
-    ----> m = f2 / f1
-          f5 = f1 * m**4
-
-    from f1 to f2, N+1 is at least N**2
-
-        ??? 1
-        x
-         x        => 3
-          x
-        
-        ??????? 1,1
-           ^
-    with x**2 we already cover:
-        
-        x   x
-        x    x
-        x     x
-         x  x
-         x   x         => 3**2
-         x    x
-          x x
-          x  x
-          x   x
-
-    now we have to add the ones that overlap:
-        0123456     fold=3
-        ??????? 1,1
-           ^
-        
-        x x
-        x  x
-         x x           => +6
-           x x
-           x  x
-            x x
-
-    = 15
-
-    So one heuristic would be to do N^2 + count arrangements that overlap the separation.
-    -> not needed for now; we are fast enough
-    """
-
     for line in text.splitlines(keepends=False):
-        # print(line)
-        a1 = Record.from_string(line, unfold=False).count_possible_arrangements()
-        a2 = Record.from_string(line, unfold=True).count_possible_arrangements()
-        m = a2 // a1
-        total += a1 * m ** 4
+        print(line)
+        f5 = Record.from_string(line, folds=5).count_possible_arrangements()  # XXX not fast enough
+
+        total += f5
 
     return total
 

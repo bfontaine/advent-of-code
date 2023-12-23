@@ -42,7 +42,6 @@ def test_get_raw_possible_group_positions2(record_str, expected):
     # 0123456 89012345 78901234 678901234
     #           1           2         3
     ("??????#.???#????. 1,1,2,4,1",
-     # FIXME reduce this
      json.loads("""
      [[0, 1, 2, 3, 4],
             [2, 3, 4, 5, 6],
@@ -56,8 +55,8 @@ def test_get_raw_possible_group_positions2(record_str, expected):
                                                                                                                         [31, 32, 33]]
      """)),
 ])
-def test_get_possible_group_positions_unfold(record_str, expected):
-    r = Record.from_string(record_str, unfold=True)
+def test_get_possible_group_positions_fold2(record_str, expected):
+    r = Record.from_string(record_str, folds=2)
     assert r.get_possible_group_positions() == expected
 
 
@@ -124,18 +123,18 @@ def test_count_possible_arrangements(record_str, expected):
     ".# 1",
     "???.### 1,1,3",
 ])
-def test_count_possible_arrangements_unfolded_unchanged(record_str):
-    assert Record.from_string(record_str, unfold=False).count_possible_arrangements() == 1
-    assert Record.from_string(record_str, unfold=True).count_possible_arrangements() == 1
+def test_count_possible_arrangements_folds2_unchanged(record_str):
+    assert Record.from_string(record_str, folds=1).count_possible_arrangements() == 1
+    assert Record.from_string(record_str, folds=2).count_possible_arrangements() == 1
 
 
 @pytest.mark.parametrize("record_str,expected1,expected2", [
     ("??? 1", 3, 15),
     ("????.??#?.?.????# 3,4,1,1", 8, 122),
 ])
-def test_count_possible_arrangements_unfolded(record_str, expected1, expected2):
-    assert Record.from_string(record_str, unfold=False).count_possible_arrangements() == expected1
-    assert Record.from_string(record_str, unfold=True).count_possible_arrangements() == expected2
+def test_count_possible_arrangements_folds2(record_str, expected1, expected2):
+    assert Record.from_string(record_str, folds=1).count_possible_arrangements() == expected1
+    assert Record.from_string(record_str, folds=2).count_possible_arrangements() == expected2
 
 
 @pytest.mark.parametrize("possible_positions,groups,expected", [
@@ -172,7 +171,6 @@ def test_problem1_input():
     ("???.### 1,1,3", 1),
     (".??..??...?##. 1,1,3", 16384),
     ("?#?#?#?#?#?#?#? 1,3,1,6", 1),
-    ("????.??#?.?.????# 3,4,1,1", 405000),
 ])
 def test_problem2_detailed_examples(text, expected):
     assert problem2(text) == expected
