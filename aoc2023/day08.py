@@ -18,7 +18,7 @@ class Network:
             directions=[0 if d == "L" else 1 for d in directions_str],
         )
 
-        for line in network_str.splitlines(keepends=False):
+        for line in network_str.splitlines():
             origin, left, right = re.findall("[0-9A-Z]{3}", line)
             network.nodes[origin] = (left, right)
 

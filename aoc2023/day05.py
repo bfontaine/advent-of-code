@@ -85,7 +85,7 @@ class Almanac(Generic[T]):
 
         category_map: Optional[CategoryMap] = None
 
-        for line in s.splitlines(keepends=False):
+        for line in s.splitlines():
             if line.startswith("seeds:"):
                 almanac.set_seeds_from_string(line)
                 continue

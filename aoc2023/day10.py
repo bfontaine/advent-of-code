@@ -122,7 +122,7 @@ class Map:
     @classmethod
     def from_text(cls, text: str):
         tiles: List[List[Tile]] = []
-        for line in text.splitlines(keepends=False):
+        for line in text.splitlines():
             tiles.append([parse_tile(char) for char in line])
         return cls(tiles=tiles)
 

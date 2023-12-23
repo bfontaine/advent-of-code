@@ -28,7 +28,7 @@ def parse_ints(line: str, ignore_spaces=False):
 def parse_races(text: str, ignore_spaces=False):
     times, record_distances = [
         parse_ints(line, ignore_spaces=ignore_spaces)
-        for line in text.splitlines(keepends=False)
+        for line in text.splitlines()
     ]
     return [Race(time, distance) for time, distance in zip(times, record_distances)]
 

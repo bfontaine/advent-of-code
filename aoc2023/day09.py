@@ -7,7 +7,7 @@ History = List[int]
 
 def parse_histories(text: str):
     histories: List[History] = []
-    for line in text.splitlines(keepends=False):
+    for line in text.splitlines():
         histories.append([int(n) for n in line.split()])
     return histories
 

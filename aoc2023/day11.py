@@ -22,7 +22,7 @@ class Universe:
         return cls(
             rows=[
                 [c == '#' for c in line]
-                for line in s.splitlines(keepends=False)
+                for line in s.splitlines()
             ]
         )
 

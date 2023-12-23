@@ -89,7 +89,7 @@ class Record:
 
 def count_all_possible_arrangements(text: str, folds=1):
     total = 0
-    for line in text.splitlines(keepends=False):
+    for line in text.splitlines():
         record = Record.from_string(line, folds=folds)
         total += record.count_possible_arrangements()
 
