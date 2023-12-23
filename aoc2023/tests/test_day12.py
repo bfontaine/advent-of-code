@@ -3,7 +3,7 @@ import json
 import pytest
 
 from aoc import assert_examples, get_input_data
-from day12 import problem1, problem2, Record
+from day12 import problem1, problem2, Record, _product
 
 
 @pytest.mark.parametrize("record_str,expected1", [
@@ -138,6 +138,28 @@ def test_count_possible_arrangements_unfolded(record_str, expected1, expected2):
     assert Record.from_string(record_str, unfold=True).count_possible_arrangements() == expected2
 
 
+@pytest.mark.parametrize("possible_positions,groups,expected", [
+    ([[0, 1, 2, 3], [2, 3, 4]], [1, 1], [
+        [0, 2], [0, 3], [0, 4],
+        [1, 3], [1, 4],
+        [2, 4]
+    ]),
+    ([[0, 1, 2], [3], [10]], [2, 5, 25], [
+        [0, 3, 10]
+    ]),
+    ([[0, 1, 2, 3], [3, 4], [4, 5, 6, 7]], [3, 1, 1],
+     [[0, 4, 6], [0, 4, 7]]),
+
+    ([[0, 1, 2, 3], [3, 4], [4, 5, 6]], [2, 1, 1],
+     [[0, 3, 5],
+      [0, 3, 6],
+      [0, 4, 6],
+      [1, 4, 6]]),
+])
+def test_product(possible_positions, groups, expected):
+    assert _product(possible_positions, groups) == expected
+
+
 def test_problem1_examples():
     assert_examples(problem1)
 
@@ -161,4 +183,4 @@ def test_problem2_examples():
 
 
 def test_problem2_input():
-    assert problem2(get_input_data()) > 61432814812898  # > too low
+    assert problem2(get_input_data()) > 110121656453127  # > too low

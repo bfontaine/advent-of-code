@@ -1,4 +1,3 @@
-import math
 from dataclasses import dataclass
 from typing import List, Iterable
 
@@ -8,6 +7,21 @@ import aoc
 EMPTY = "."  # = operational
 PRESENT = "#"  # = damaged
 UNKNOWN = "?"
+
+
+def _product(all_positions: List[List[int]], groups: List[int]) -> Iterable[List[int]]:
+    partial_groups_positions: Iterable[List[int]] = [[]]
+
+    for i, group_positions in enumerate(all_positions):
+        partial_groups_positions = [
+            partial_group_positions + [position]
+            for partial_group_positions in partial_groups_positions
+            for position in group_positions
+            if i == 0 or (
+                    partial_group_positions[-1] + groups[i - 1] < position
+            )
+        ]
+    return partial_groups_positions
 
 
 @dataclass
@@ -174,75 +188,18 @@ class Record:
 
         return True
 
-    def _product(self, all_positions: List[List[int]]) -> Iterable[List[int]]:
-        partial_groups_positions: Iterable[List[int]] = [[]]
-
-        for i, group_positions in enumerate(all_positions):
-            partial_groups_positions = [partial_group_positions + [position]
-                                        for partial_group_positions in partial_groups_positions
-                                        for position in group_positions
-                                        if i == 0 or (
-                                                partial_group_positions[-1] + self.groups[i - 1] < position
-                                        )]
-        return partial_groups_positions
-
     def _count_possible_arrangements(self, possible_group_positions: List[List[int]]) -> int:
         total = 0
 
         # print(possible_group_positions)
-        for arrangement in self._product(possible_group_positions):
+        for arrangement in _product(possible_group_positions, self.groups):
             if self._is_arrangement_possible(arrangement):
                 total += 1
 
         return total
 
-    def count_possible_arrangements(self, only_across_fold=False) -> int:
+    def count_possible_arrangements(self) -> int:
         possible_group_positions = self.get_possible_group_positions()
-
-        entropy = math.prod(map(len, possible_group_positions))
-
-        if only_across_fold:
-            fold = len(self.conditions) // 2
-            half_groups = len(self.groups) // 2
-
-            # overflow on the left:
-            # (= all left at left, first right at left or middle)
-            left_overflow = \
-                [
-                    # all left on the left
-                    [p for p in positions if p < fold]
-                    for positions in possible_group_positions[:half_groups]
-                ] + [
-                    # first right on the left or on the fold
-                    [p for p in possible_group_positions[half_groups] if p <= fold]
-                    # + the rest
-                ] + possible_group_positions[half_groups + 1:]
-
-            # overflow on the right
-            right_overflow = \
-                possible_group_positions[:half_groups - 1] \
-                + [
-                    # last left on the right or on the fold
-                    [p for p in possible_group_positions[half_groups - 1] if p >= fold]
-                ] + [
-                    # all right on the right
-                    [p for p in positions if p > fold]
-                    for positions in possible_group_positions[half_groups:]
-                ]
-
-            self._reduce_possible_group_positions(left_overflow)
-            self._reduce_possible_group_positions(right_overflow)
-
-            assert len(left_overflow) == len(self.groups)
-            assert len(right_overflow) == len(self.groups)
-
-            l_entropy = math.prod(map(len, left_overflow))
-            r_entropy = math.prod(map(len, right_overflow))
-            print(f"{entropy} -> {l_entropy} + {r_entropy}")
-
-            return self._count_possible_arrangements(left_overflow) \
-                + self._count_possible_arrangements(right_overflow)
-
         return self._count_possible_arrangements(possible_group_positions)
 
 
@@ -259,19 +216,18 @@ def problem2(text: str):
     total = 0
 
     """
-    examples                 folds=1   =2     =3         =4          =5
+    examples                 folds=1   f2     f3         f4          f5
     ???.### 1,1,3               1       1      1          1           1
     .??..??...?##. 1,1,3        4      32    256        ...       [1684]
     ?#?#?#?#?#?#?#? 1,3,1,6     1       1      1          1           1
     ????.#...#... 4,1,1         1       2      4          8         [16]
     ????.######..#####. 1,6,5   4      20    100        500       [2500]
     ?###???????? 3,2,1         10     150  (2250?)   (33750?)   [506250]
-    
-    ----> =2 / =1 -> multiple
-            =1 * multiple**4
 
-    from f=1 to f=2, N+1 is at least N**2
+    ----> m = f2 / f1
+          f5 = f1 * m**4
 
+    from f1 to f2, N+1 is at least N**2
 
         ??? 1
         x
@@ -306,42 +262,15 @@ def problem2(text: str):
 
     = 15
 
-    ---> so we have to somehow limit to arrangements that overlap the separation and then add N^2
-
-    self.get_possible_group_positions():
-        [ [0, 1, 2, 3, 4],
-                [2, 3, 4, 5, 6] ]   -> 5*5 possibilities = 25
-
-        -> take only the overlaps, so:
-              all < 3+1
-              [ [0, 1, 2, 3], [2, 3] ] < left  ->   4*2 possibilities
-              all > 3-1
-            + [ [3, 4], [3, 4, 5, 6] ] < right ->   2*4 possibilities
-                                                  = 16
-
-
-    --------------------------------------------------
-    ^ not sufficient:
-    
-    ????? 1,1
-    |
-    V
-    ??????????? 1,1,1,1
-         ^
-    
-    x x x x <- 3 on left, one on right
-    
-    so check groups_left and groups_right (aka groups divided in two)
-    so that we check for cases where at least one of group_left is >=fold
-                and cases where at least one of group_right is <=fold
+    So one heuristic would be to do N^2 + count arrangements that overlap the separation.
+    -> not needed for now; we are fast enough
     """
 
     for line in text.splitlines(keepends=False):
-        print(line)
+        # print(line)
         a1 = Record.from_string(line, unfold=False).count_possible_arrangements()
-        a2 = a1 ** 2 + Record.from_string(line, unfold=True).count_possible_arrangements(only_across_fold=True)
+        a2 = Record.from_string(line, unfold=True).count_possible_arrangements()
         m = a2 // a1
-        # print(f"a1={a1} a2={a2} tot={a1 * m ** 4}")
         total += a1 * m ** 4
 
     return total
