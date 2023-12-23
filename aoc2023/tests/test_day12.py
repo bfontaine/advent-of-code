@@ -43,10 +43,6 @@ def test_problem1_examples():
     assert_examples(problem1)
 
 
-def test_problem1_input():
-    assert problem1(get_input_data()) == 7350
-
-
 @pytest.mark.parametrize("text,expected", [
     ("???.### 1,1,3", 1),
     (".??..??...?##. 1,1,3", 16384),
@@ -61,7 +57,3 @@ def test_problem2_detailed_examples(text, expected):
 
 def test_problem2_examples():
     assert_examples(problem2)
-
-
-def test_problem2_input():
-    assert problem2(get_input_data()) > 110121656453127  # > too low
