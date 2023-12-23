@@ -86,8 +86,35 @@ def test_count_possible_arrangements(record_str, expected):
     assert r.count_possible_arrangements() == expected
 
 
+
+
+@pytest.mark.parametrize("record_str,expected,expected_folded5", [
+    ("? 1", 1, 1),
+    ("# 1", 1, 1),
+    ("## 2", 1, 1),
+    ("### 3", 1, 1),
+    ("#. 1", 1, 1),
+    (".# 1", 1, 1),
+
+    ("???.### 1,1,3", 1, 1),
+])
+def test_count_possible_arrangements_folded(record_str, expected, expected_folded5):
+    assert Record.from_string(record_str).count_possible_arrangements() == expected
+    assert Record.from_string(record_str, folds=5).count_possible_arrangements() == expected_folded5
+
+
 def test_problem1_examples():
     assert_examples(problem1)
 
-# def test_problem2_examples():
-#     assert_examples(problem2)
+
+@pytest.mark.parametrize("text,expected", [
+    ("???.### 1,1,3", 1),
+    (".??..??...?##. 1,1,3", 16384),
+    ("?#?#?#?#?#?#?#? 1,3,1,6", 1),
+])
+def test_problem2_detailed_examples(text, expected):
+    assert problem2(text) == expected
+
+
+def test_problem2_examples():
+    assert_examples(problem2)

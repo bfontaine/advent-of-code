@@ -25,8 +25,12 @@ class Record:
         return len(self.conditions)
 
     @classmethod
-    def from_string(cls, s: str):
+    def from_string(cls, s: str, folds=1):
         conditions_str, groups_str = s.split(" ", 1)
+
+        conditions_str = "?".join([conditions_str] * folds)
+        groups_str = ",".join([groups_str] * folds)
+
         return cls(
             conditions=[Condition(c) for c in conditions_str],
             groups=[int(n) for n in groups_str.split(",")],
@@ -126,25 +130,38 @@ class Record:
         return clj.count(self.get_possible_arrangements())
 
 
-def parse_records(text: str):
-    return [
-        Record.from_string(line)
-        for line in text.splitlines(keepends=False)
-    ]
-
-
 def problem1(text: str):
-    records = parse_records(text)
-
     total = 0
-    for record in records:
+    for line in text.splitlines(keepends=False):
+        record = Record.from_string(line, folds=1)
         total += record.count_possible_arrangements()
 
     return total
 
 
 def problem2(text: str):
-    raise NotImplementedError()
+    total = 0
+
+    """
+    examples                 folds=1   =2     =3         =4          =5
+    ???.### 1,1,3               1       1      1          1           1
+    .??..??...?##. 1,1,3        4      32    256        ...       [1684]
+    ?#?#?#?#?#?#?#? 1,3,1,6     1       1      1          1           1
+    ????.#...#... 4,1,1         1       2      4          8         [16]
+    ????.######..#####. 1,6,5   4      20    100        500       [2500]
+    ?###???????? 3,2,1         10     150  (2250?)   (33750?)   [506250]
+    
+    ----> =2 / =1 -> multiple
+            =1 * multiple**4
+    """
+
+    for line in text.splitlines(keepends=False):
+        a1 = Record.from_string(line, folds=1).count_possible_arrangements()
+        a2 = Record.from_string(line, folds=2).count_possible_arrangements()
+        m = a2 // a1
+        total += a1 * m ** 4
+
+    return total
 
 
 if __name__ == '__main__':
