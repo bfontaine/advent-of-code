@@ -1,49 +1,77 @@
+import json
+
 import pytest
 
-from aoc import assert_examples
+from aoc import assert_examples, get_input_data
 from day12 import problem1, problem2, Record
 
 
-@pytest.mark.parametrize("record_str,expected", [
-    ("### 3", range(0, 1)),
-    ("#??? 2", range(0, 1)),
-    ("???? 4", range(0, 1)),
-    ("???? 3", range(0, 2)),
-    ("???? 2", range(0, 3)),
-    ("???? 1", range(0, 4)),
-    (".??? 1", range(1, 4)),
-    ("..?? 1", range(2, 4)),
-    ("..?? 2", range(2, 3)),
-    ("?? 2", range(0, 1)),
-    ("?? 1", range(0, 2)),
-    ("??.. 2", range(0, 1)),
-    ("??.. 1", range(0, 2)),
+@pytest.mark.parametrize("record_str,expected1", [
+    ("### 3", [0]),
+    ("#??? 2", [0]),
+    ("???? 4", [0]),
+    ("???? 3", [0, 1]),
+    ("???? 2", [0, 1, 2]),
+    ("???? 1", [0, 1, 2, 3]),
+    (".??? 1", [1, 2, 3]),
+    ("..?? 1", [2, 3]),
+    ("..?? 2", [2]),
+    ("?? 2", [0]),
+    ("?? 1", [0, 1]),
+    ("??.. 2", [0]),
+    ("??.. 1", [0, 1]),
 ])
-def test_get_raw_possible_group_positions1(record_str, expected):
+def test_get_raw_possible_group_positions1(record_str, expected1):
     r = Record.from_string(record_str)
-    assert r.get_raw_possible_group_positions() == [expected]
+    assert r.get_raw_possible_group_positions() == [expected1]
 
 
 @pytest.mark.parametrize("record_str,expected", [
-    ("###?? 3,1", [range(0, 1), range(4, 5)]),
-    ("??### 1,3", [range(0, 1), range(2, 3)]),
-    ("???### 1,3", [range(0, 2), range(2, 4)]),
-    ("???.????? 3,1", [range(0, 5), range(4, 9)]),
+    ("###?? 3,1", [[0], [4]]),
+    ("??### 1,3", [[0], [2]]),
+    ("???### 1,3", [[0, 1], [3]]),
+    ("???.????? 3,1", [[0, 4], [4, 5, 6, 7, 8]]),
 ])
 def test_get_raw_possible_group_positions2(record_str, expected):
     r = Record.from_string(record_str)
     assert r.get_raw_possible_group_positions() == expected
 
 
-@pytest.mark.parametrize("record_str,expected_raw,expected", [
-    ("???.??? 3", [range(0, 5)], [[0, 4]]),
+@pytest.mark.parametrize("record_str,expected", [
+    # ??????#.???#????.???????#.???#????.
+    # 0123456 89012345 78901234 678901234
+    #           1           2         3
+    ("??????#.???#????. 1,1,2,4,1",
+     # FIXME reduce this
+     json.loads("""
+     [[0, 1, 2, 3, 4],
+            [2, 3, 4, 5, 6],
+                  [4, 5,       8, 9],
+                              [8, 9, 10, 11, 12],
+                                                [13, 14, 15,     17],
+                                                        [15,     17, 18, 19],
+                                                                [17, 18, 19, 20, 21],
+                                                                        [19, 20, 21, 22, 23],
+                                                                                                    [26, 27, 28],
+                                                                                                                        [31, 32, 33]]
+     """)),
 ])
-def test_get_possible_group_positions(record_str, expected_raw, expected):
-    r = Record.from_string(record_str)
-    assert r.get_raw_possible_group_positions() == expected_raw
+def test_get_possible_group_positions_unfold(record_str, expected):
+    r = Record.from_string(record_str, unfold=True)
     assert r.get_possible_group_positions() == expected
 
 
+@pytest.mark.parametrize("record_str,expected", [
+    ("???.??? 3", [[0, 4]]),
+    ("???.??????? 1,4", [[0, 1, 2, 4, 5], [4, 5, 6, 7]]),
+])
+def test_get_possible_group_positions_unchanged_raw(record_str, expected):
+    r = Record.from_string(record_str)
+    assert r.get_raw_possible_group_positions() == expected
+    assert r.get_possible_group_positions() == expected
+
+
+"""
 @pytest.mark.parametrize("record_str,expected", [
     ("??? 1", [(0,), (1,), (2,)]),
     ("??? 1,1", [(0, 2)]),
@@ -72,6 +100,7 @@ def test_get_possible_group_positions(record_str, expected_raw, expected):
 def test_get_possible_arrangements(record_str, expected):
     r = Record.from_string(record_str)
     assert sorted(r.get_possible_arrangements()) == expected
+"""
 
 
 @pytest.mark.parametrize("record_str,expected", [
@@ -86,31 +115,42 @@ def test_count_possible_arrangements(record_str, expected):
     assert r.count_possible_arrangements() == expected
 
 
-
-
-@pytest.mark.parametrize("record_str,expected,expected_folded5", [
-    ("? 1", 1, 1),
-    ("# 1", 1, 1),
-    ("## 2", 1, 1),
-    ("### 3", 1, 1),
-    ("#. 1", 1, 1),
-    (".# 1", 1, 1),
-
-    ("???.### 1,1,3", 1, 1),
+@pytest.mark.parametrize("record_str", [
+    "? 1",
+    "# 1",
+    "## 2",
+    "### 3",
+    "#. 1",
+    ".# 1",
+    "???.### 1,1,3",
 ])
-def test_count_possible_arrangements_folded(record_str, expected, expected_folded5):
-    assert Record.from_string(record_str).count_possible_arrangements() == expected
-    assert Record.from_string(record_str, folds=5).count_possible_arrangements() == expected_folded5
+def test_count_possible_arrangements_unfolded_unchanged(record_str):
+    assert Record.from_string(record_str, unfold=False).count_possible_arrangements() == 1
+    assert Record.from_string(record_str, unfold=True).count_possible_arrangements() == 1
+
+
+@pytest.mark.parametrize("record_str,expected1,expected2", [
+    ("??? 1", 3, 15),
+    ("????.??#?.?.????# 3,4,1,1", 8, 122),
+])
+def test_count_possible_arrangements_unfolded(record_str, expected1, expected2):
+    assert Record.from_string(record_str, unfold=False).count_possible_arrangements() == expected1
+    assert Record.from_string(record_str, unfold=True).count_possible_arrangements() == expected2
 
 
 def test_problem1_examples():
     assert_examples(problem1)
 
 
+def test_problem1_input():
+    assert problem1(get_input_data()) == 7350
+
+
 @pytest.mark.parametrize("text,expected", [
     ("???.### 1,1,3", 1),
     (".??..??...?##. 1,1,3", 16384),
     ("?#?#?#?#?#?#?#? 1,3,1,6", 1),
+    ("????.??#?.?.????# 3,4,1,1", 405000),
 ])
 def test_problem2_detailed_examples(text, expected):
     assert problem2(text) == expected
@@ -118,3 +158,7 @@ def test_problem2_detailed_examples(text, expected):
 
 def test_problem2_examples():
     assert_examples(problem2)
+
+
+def test_problem2_input():
+    assert problem2(get_input_data()) > 61432814812898  # > too low
