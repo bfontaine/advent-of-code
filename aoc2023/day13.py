@@ -1,6 +1,7 @@
 from typing import List
 
 import aoc
+from aoc.containers import Grid
 
 
 def _is_reflection_line(line: int, lookup: List[str], max_line: int, smudge=False):
@@ -21,17 +22,7 @@ def _is_reflection_line(line: int, lookup: List[str], max_line: int, smudge=Fals
     return smudged
 
 
-class Pattern:
-    def __init__(self, rows: List[str]):
-        self.rows = rows
-
-        self.height = len(rows)
-        self.width = len(rows[0])
-        self.columns = [
-            "".join([row[x] for row in self.rows])
-            for x in range(self.width)
-        ]
-
+class Pattern(Grid):
     def is_vertical_reflection_line(self, line_x: int, smudge=False):
         return _is_reflection_line(line_x, self.columns, self.width, smudge=smudge)
 
