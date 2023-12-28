@@ -4,7 +4,7 @@ import traceback
 import warnings
 from datetime import date
 from os import environ
-from typing import Any, Callable, Set, Optional, Iterable
+from typing import Any, Callable, Set, Optional, Iterable, List
 
 from dotenv import load_dotenv
 import aocd
@@ -44,14 +44,23 @@ def get_day_and_year():
     return get_day(), YEAR
 
 
-def get_puzzle():
-    day, year = get_day_and_year()
-    return Puzzle(year=year, day=day)
+def get_puzzle(day: Optional[int] = None):
+    if day is None:
+        day = get_day()
+
+    return Puzzle(year=YEAR, day=day)
 
 
 def get_input_data():
     day, year = get_day_and_year()
     return aocd.get_data(day=day, year=year)
+
+
+def example_input_data(day: Optional[int] = None) -> str:
+    """Get the first example's input data."""
+    puzzle = get_puzzle(day=day)
+    assert puzzle.examples, "Puzzle must have examples"
+    return puzzle.examples[0].input_data
 
 
 def refresh_examples():
@@ -88,13 +97,27 @@ def assert_examples(fn: Solution,
             f"Problem #{problem}, sample #{i + 1}: expected {expected_response}, got {actual_response}"
 
 
-def run(solution1: Solution, solution2: Optional[Solution] = None):
+def run(
+        solution1: Solution,
+        solution2: Optional[Solution] = None,
+        *,
+        flags: Optional[List[str]] = None,
+):
     p = argparse.ArgumentParser()
     p.add_argument("--refresh-examples", "-r", action="store_true",
                    help="Invalidate the cache used for the examples and exit.")
     p.add_argument("problem", type=int, nargs="?", choices=(1, 2), metavar="PROBLEM",
                    help="Run only the specified problem.")
+
+    if flags is None:
+        flags = []
+
+    for flag in flags:
+        p.add_argument(f"--{flag}", action="store_true")
+
     opts = p.parse_args()
+    kwargs = {flag: getattr(opts, flag) for flag in flags}
+
     problem = opts.problem
 
     if opts.refresh_examples:
@@ -104,7 +127,8 @@ def run(solution1: Solution, solution2: Optional[Solution] = None):
     input_data = get_input_data()
 
     if not problem or problem == 1:
-        print("Problem #1:", solution1(input_data))
+        # noinspection PyArgumentList
+        print("Problem #1:", solution1(input_data, **kwargs))
 
     if not solution2:
         if problem == 2:
@@ -113,4 +137,5 @@ def run(solution1: Solution, solution2: Optional[Solution] = None):
         return
 
     if not problem or problem == 2:
-        print("Problem #2:", solution2(input_data))
+        # noinspection PyArgumentList
+        print("Problem #2:", solution2(input_data, **kwargs))

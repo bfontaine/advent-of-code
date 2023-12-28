@@ -1,9 +1,11 @@
-from typing import List, Iterator, Tuple
+from typing import List, Iterator, Tuple, Optional
 
 
 class Grid:
     """
     Basic grid container based on a list of strings.
+
+    This exposes ``rows`` and ``columns`` attributes; each one is re-computed if the other one changes.
     """
 
     def __init__(self, rows: List[str]):
@@ -49,12 +51,16 @@ class Grid:
             for y in range(self.height)
         ]
 
+    def valid_coordinates(self, x: int, y: int):
+        return 0 <= x < self.width and 0 <= y < self.height
+
     @classmethod
     def from_string(cls, s: str):
         return cls(rows=s.splitlines())
 
-    def iter_chars(self, char: str) -> Iterator[Tuple[int, int]]:
+    def iter_chars(self, char: Optional[str] = None) -> Iterator[Tuple[int, int]]:
+        no_char = char is None
         for y, row in enumerate(self.rows):
             for x, c in enumerate(row):
-                if c == char:
+                if no_char or c == char:
                     yield x, y
