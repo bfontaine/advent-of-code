@@ -1,5 +1,3 @@
-import pytest
-
 from aoc import assert_examples
 from day15 import problem1, problem2
 
