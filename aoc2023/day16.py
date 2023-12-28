@@ -1,12 +1,8 @@
 import enum
-import time
 from collections import deque
 from typing import Set, List
 
-from colorama import Back
-
 import aoc
-from aoc import c
 from aoc.containers import Grid
 from aoc.directions import Direction, EAST, SOUTH, NORTH, WEST
 
@@ -64,8 +60,8 @@ class Contraption(Grid):
             for row in self.rows
         ]
 
-    def propagate_beams(self, visual=False):
-        propagation_queue = deque([(-1, 0, EAST)])
+    def propagate_beam(self, x: int, y: int, direction: Direction):
+        propagation_queue = deque([(x, y, direction)])
 
         while propagation_queue:
             x1, y1, direction = propagation_queue.popleft()
@@ -83,27 +79,10 @@ class Contraption(Grid):
                     tile_beams.add(direction)
                     propagation_queue.append((x, y, direction))
 
-                if visual:
-                    print("\033[H\033[J", end="")
-                    print(self.pretty_string())
-                    time.sleep(0.2)
 
-    def pretty_string(self) -> str:
-        rows: List[str] = []
-        for y, row in enumerate(self.rows):
-            row_parts: List[str] = []
-            for x, tile in enumerate(row):
-                beams = len(self.beams[y][x])
-                color = [Back.WHITE, Back.YELLOW, Back.RED, Back.MAGENTA, Back.BLUE][beams]
-                row_parts.append(c(tile, color))
-
-            rows.append("".join(row_parts))
-        return "\n".join(rows)
-
-
-def problem1(text: str, visual=False):
+def problem1(text: str):
     grid = Contraption.from_string(text)
-    grid.propagate_beams(visual=visual)
+    grid.propagate_beam(-1, 0, EAST)
 
     return sum([1 for x, y in grid.iter_chars() if grid.beams[y][x]])
 
@@ -113,4 +92,4 @@ def problem2(text: str):
 
 
 if __name__ == '__main__':
-    aoc.run(problem1, problem2, flags=["visual"])
+    aoc.run(problem1, problem2)
