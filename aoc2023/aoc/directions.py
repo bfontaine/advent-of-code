@@ -1,5 +1,5 @@
 import enum
-from dataclasses import dataclass
+from typing import NamedTuple
 
 
 class Orientation(int, enum.Enum):
@@ -8,8 +8,7 @@ class Orientation(int, enum.Enum):
     STARBOARD = enum.auto()
 
 
-@dataclass(frozen=True)
-class Direction:
+class Direction(NamedTuple):
     dx: int
     dy: int
 
@@ -32,7 +31,7 @@ class Direction:
         return x + self.dx, y + self.dy
 
     def __repr__(self):
-        return f"{self.__class__.__name__}<{DIRECTION_SYMBOLS[DIRECTIONS.index(self)]}"
+        return f"{self.__class__.__name__}<{DIRECTION_SYMBOLS[DIRECTIONS.index(self)]}>"
 
 
 NORTH = Direction(0, -1)

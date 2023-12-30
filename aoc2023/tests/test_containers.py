@@ -1,8 +1,8 @@
-from aoc.containers import Grid
+from aoc.containers import StringGrid
 
 
-def test_grid_copy():
-    g1 = Grid(rows=["foo", "bar"])
+def test_string_grid_copy():
+    g1 = StringGrid(rows=["foo", "bar"])
     g2 = g1.copy()
     assert g1 is not g2
     assert g2 is not g1

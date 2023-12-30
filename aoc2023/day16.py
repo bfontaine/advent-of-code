@@ -3,7 +3,7 @@ from collections import deque
 from typing import Set, List, Tuple, Iterator
 
 import aoc
-from aoc.containers import Grid
+from aoc.containers import StringGrid
 from aoc.directions import Direction, EAST, SOUTH, NORTH, WEST
 
 
@@ -52,7 +52,7 @@ class Tile(str, enum.Enum):
                 return splitter_directions
 
 
-class Contraption(Grid):
+class Contraption(StringGrid):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.beams: List[List[Set[Direction]]] = []
@@ -84,7 +84,7 @@ class Contraption(Grid):
                     propagation_queue.append((x, y, direction))
 
     def count_energized_tiles(self):
-        return sum(1 for x, y in self.iter_chars() if self.beams[y][x])
+        return sum(1 for x, y in self.iter_coordinates() if self.beams[y][x])
 
 
 def problem1(text: str):

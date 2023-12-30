@@ -1,7 +1,7 @@
 from typing import List
 
 import aoc
-from aoc.containers import Grid
+from aoc.containers import StringGrid
 
 
 def _is_reflection_line(line: int, lookup: List[str], max_line: int, smudge=False):
@@ -22,7 +22,7 @@ def _is_reflection_line(line: int, lookup: List[str], max_line: int, smudge=Fals
     return smudged
 
 
-class Pattern(Grid):
+class Pattern(StringGrid):
     def is_vertical_reflection_line(self, line_x: int, smudge=False):
         return _is_reflection_line(line_x, self.columns, self.width, smudge=smudge)
 

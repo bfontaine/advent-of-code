@@ -2,7 +2,7 @@ import re
 from typing import List, Tuple, Iterator, Dict
 
 import aoc
-from aoc.containers import Grid
+from aoc.containers import StringGrid
 
 ROUNDED_ROCK = "O"
 CUBE_ROCK = "#"
@@ -23,7 +23,7 @@ def _roll_lines(lines: List[str], left=True):
     ]
 
 
-class Support(Grid):
+class Support(StringGrid):
     def _roll_columns(self, north=True):
         self.columns = _roll_lines(self.columns, left=north)
         return self
@@ -54,7 +54,7 @@ class Support(Grid):
         )
 
     def iter_rounded_rocks(self) -> Iterator[Tuple[int, int]]:
-        return self.iter_chars(ROUNDED_ROCK)
+        return self.iter_coordinates(ROUNDED_ROCK)
 
     def north_load(self):
         return sum([
