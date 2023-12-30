@@ -1,6 +1,6 @@
 import enum
 from collections import deque
-from typing import Set, List
+from typing import Set, List, Tuple, Iterator
 
 import aoc
 from aoc.containers import Grid
@@ -55,10 +55,11 @@ class Tile(str, enum.Enum):
 class Contraption(Grid):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.beams: List[List[Set[Direction]]] = []
         self.reset_beams()
 
     def reset_beams(self):
-        self.beams: List[List[Set[Direction]]] = [
+        self.beams = [
             [set() for _ in row]
             for row in self.rows
         ]
@@ -82,47 +83,41 @@ class Contraption(Grid):
                     tile_beams.add(direction)
                     propagation_queue.append((x, y, direction))
 
+    def count_energized_tiles(self):
+        return sum(1 for x, y in self.iter_chars() if self.beams[y][x])
+
 
 def problem1(text: str):
     grid = Contraption.from_string(text)
     grid.propagate_beam(-1, 0, EAST)
 
-    return sum([1 for x, y in grid.iter_chars() if grid.beams[y][x]])
+    return grid.count_energized_tiles()
+
+
+def gen_all_beams(grid: Contraption) -> Iterator[Tuple[int, int, Direction]]:
+    for y in range(grid.height):
+        yield -1, y, EAST  # from left
+        yield grid.width, y, WEST  # from right
+
+    for x in range(grid.width):
+        yield x, -1, SOUTH  # from top
+        yield x, grid.height, NORTH  # from bottom
 
 
 def problem2(text: str):
-    """..."""
-    """
-    For each direction and each tile in the grid
-        compute how many tiles would be energized AFTER if a beam were here
+    grid = Contraption.from_string(text)
+    max_energized_tiles = 0
 
-        Issues:
-        * we can't count tiles BEFORE the tile as their energy doesn't depend on it
-          (mirrors are reversible but splitters aren't)
-        * there can be infinite loops:
-                  V
-                / - \\
-               \\   /
+    beam: Tuple[int, int, Direction]
+    for beam in gen_all_beams(grid):
+        grid.propagate_beam(*beam)
+        max_energized_tiles = max(
+            max_energized_tiles,
+            grid.count_energized_tiles(),
+        )
+        grid.reset_beams()
 
-        * there are overlaps:
-          /     \\
-    -> ...-...-./
-       abcdefghi
-
-       a highlights bcdefghi
-       b highlights  cdefghi
-       e highlights     fghi
-       f highlights    e ghi  <- does 'e' count? we already ran over it, but there might be some configuration where
-       g highlights    ef hi     we run over 'f' but didn't run over 'e' before
-
-    maybe:
-        dict of (x,y,direction) -> set of (x,y) energized
-        -> would be huge                  ^^^^^-----------------.
-        -> couldn't be reused as we don't have directions here -'
-                -> add directions? -> even more huge
-    """
-
-    raise NotImplementedError()
+    return max_energized_tiles
 
 
 if __name__ == '__main__':
