@@ -53,7 +53,7 @@ class Tile(str, enum.Enum):
 
 
 class Contraption(Grid):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.beams: List[List[Set[Direction]]] = [
             [set() for _ in row]

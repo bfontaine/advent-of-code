@@ -71,7 +71,7 @@ def parse_tile(sym: str) -> Tile:
 
 
 class Map:
-    def __init__(self, tiles: List[List[Tile]]) -> None:
+    def __init__(self, tiles: List[List[Tile]]):
         self.tiles = tiles
 
         self._loop: Optional[List[Position]] = None
@@ -165,7 +165,7 @@ class Map:
                 return initial_pipe
         raise RuntimeError("Can't find initial pipe")
 
-    def _set_loop(self) -> None:
+    def _set_loop(self):
         loop_positions = [self.starting_position]
 
         side_tiles: Dict[Orientation, Set[Position]] = {
@@ -236,7 +236,7 @@ class Map:
 
         return outside_positions
 
-    def show(self) -> None:
+    def show(self):
         loop_positions = set(self.get_loop())
 
         for y, row in enumerate(self.tiles):

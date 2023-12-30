@@ -22,6 +22,10 @@ types-colorama = "^0.4.15.12"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.mypy]
+check_untyped_defs = true
+warn_unused_configs = true
+
 [[tool.mypy.overrides]]
 module = [
     "aocd",

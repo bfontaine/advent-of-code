@@ -30,13 +30,13 @@ class Universe:
     def width(self):
         return len(self.rows[0])
 
-    def _set_expanded_rows(self) -> None:
+    def _set_expanded_rows(self):
         self._expanded_rows: Set[int] = set()
         for y, row in list(enumerate(self.rows)):
             if not any(row):
                 self._expanded_rows.add(y)
 
-    def _set_expanded_columns(self) -> None:
+    def _set_expanded_columns(self):
         self._expanded_columns: Set[int] = set()
         for x in range(self.width):
             if not any(row[x] for row in self.rows):
