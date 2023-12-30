@@ -55,6 +55,9 @@ class Tile(str, enum.Enum):
 class Contraption(Grid):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.reset_beams()
+
+    def reset_beams(self):
         self.beams: List[List[Set[Direction]]] = [
             [set() for _ in row]
             for row in self.rows
@@ -88,6 +91,37 @@ def problem1(text: str):
 
 
 def problem2(text: str):
+    """..."""
+    """
+    For each direction and each tile in the grid
+        compute how many tiles would be energized AFTER if a beam were here
+
+        Issues:
+        * we can't count tiles BEFORE the tile as their energy doesn't depend on it
+          (mirrors are reversible but splitters aren't)
+        * there can be infinite loops:
+                  V
+                / - \\
+               \\   /
+
+        * there are overlaps:
+          /     \\
+    -> ...-...-./
+       abcdefghi
+
+       a highlights bcdefghi
+       b highlights  cdefghi
+       e highlights     fghi
+       f highlights    e ghi  <- does 'e' count? we already ran over it, but there might be some configuration where
+       g highlights    ef hi     we run over 'f' but didn't run over 'e' before
+
+    maybe:
+        dict of (x,y,direction) -> set of (x,y) energized
+        -> would be huge                  ^^^^^-----------------.
+        -> couldn't be reused as we don't have directions here -'
+                -> add directions? -> even more huge
+    """
+
     raise NotImplementedError()
 
 
