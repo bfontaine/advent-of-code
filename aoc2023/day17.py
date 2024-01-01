@@ -16,9 +16,9 @@ class PositionState(NamedTuple):
     def coordinates(self):
         return self.x, self.y
 
-    def forward(self):
-        x1, y1 = self.direction.apply(self.x, self.y)
-        return PositionState(x=x1, y=y1, direction=self.direction, steps=self.steps + 1)
+    def forward(self, steps=1):
+        x1, y1 = self.direction.apply(self.x, self.y, force=steps)
+        return PositionState(x=x1, y=y1, direction=self.direction, steps=self.steps + steps)
 
     def turn(self, orientation: Orientation):
         new_direction = self.direction.turn(orientation)
@@ -47,7 +47,6 @@ class City(IntGrid):
         end_position = self.end_position
 
         heat: int
-        position: PositionState
         candidate_positions: List[PositionState]
         while queue:
             heat, position = heappop(queue)
@@ -66,6 +65,10 @@ class City(IntGrid):
                     position.turn(orientation)
                     for orientation in Orientation
                 ])
+            else:
+                # This could be optimized: we could directly .forward(min_steps_per_direction - position.steps)
+                # and avoid testing intermediate steps
+                pass
 
             # go forward if we can
             if position.steps < max_steps_per_direction:

@@ -27,8 +27,8 @@ class Direction(NamedTuple):
             case _:
                 raise ValueError(f"Invalid orientation {orientation}")
 
-    def apply(self, x: int, y: int):
-        return x + self.dx, y + self.dy
+    def apply(self, x: int, y: int, *, force=1):
+        return x + self.dx * force, y + self.dy * force
 
     def __repr__(self):
         return f"{self.__class__.__name__}<{DIRECTION_SYMBOLS[DIRECTIONS.index(self)]}>"
