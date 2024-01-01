@@ -33,10 +33,14 @@ class City(IntGrid):
 
     def get_least_heat_loss(self, *, min_steps_per_direction: int, max_steps_per_direction: int):
         # (heat so far (used to prioritize so we always explore the path with min cost so far first), state)
-        queue: List[Tuple[int, PositionState]] = [
-            (0, PositionState(x=0, y=0, direction=EAST, steps=1)),
-            (0, PositionState(x=0, y=0, direction=SOUTH, steps=1)),
-        ]
+        queue: List[Tuple[int, PositionState]] = []
+
+        for direction in (EAST, SOUTH):
+            x, y = direction.apply(0, 0)
+            if self.valid_coordinates(x, y):
+                position = PositionState(x=x, y=y, direction=direction, steps=1)
+                queue.append((self.rows[y][x], position))
+
         heapify(queue)
 
         seen: Set[PositionState] = set()
@@ -57,13 +61,13 @@ class City(IntGrid):
                 if position.coordinates == end_position:
                     return heat
 
-                # try turning if we can
+                # turn if we can
                 candidate_positions.extend([
                     position.turn(orientation)
                     for orientation in Orientation
                 ])
 
-            # trying going forward if we can
+            # go forward if we can
             if position.steps < max_steps_per_direction:
                 candidate_positions.append(position.forward())
 
