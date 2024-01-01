@@ -181,7 +181,7 @@ class Map:
 
             for orientation in Orientation:
                 for direction in (prev_direction, next_direction):
-                    orientation_direction = direction.get_direction_from_orientation(orientation)
+                    orientation_direction = direction.turn(orientation)
                     orientation_position = new_position.go_to(orientation_direction)
                     if not self.is_outside(orientation_position):
                         side_tiles[orientation].add(orientation_position)

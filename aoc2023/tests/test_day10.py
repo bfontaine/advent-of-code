@@ -43,8 +43,8 @@ def test_problem1_examples():
     (EAST, Orientation.PORTSIDE, NORTH),
     (EAST, Orientation.STARBOARD, SOUTH),
 ])
-def test_get_direction_from_orientation(direction, orientation, expected):
-    assert direction.get_direction_from_orientation(orientation) == expected
+def test_turn(direction, orientation, expected):
+    assert direction.turn(orientation) == expected
 
 
 @pytest.mark.parametrize("text", [

@@ -4,8 +4,8 @@ from typing import NamedTuple
 
 class Orientation(int, enum.Enum):
     # https://en.wikipedia.org/wiki/Port_and_starboard
-    PORTSIDE = enum.auto()
-    STARBOARD = enum.auto()
+    PORTSIDE = enum.auto()  # "left"
+    STARBOARD = enum.auto()  # "right"
 
 
 class Direction(NamedTuple):
@@ -15,7 +15,7 @@ class Direction(NamedTuple):
     def opposite(self):
         return Direction(-self.dx, -self.dy)
 
-    def get_direction_from_orientation(self, orientation: Orientation):
+    def turn(self, orientation: Orientation) -> "Direction":
         idx = DIRECTIONS.index(self)
         match orientation:
             case Orientation.PORTSIDE:
