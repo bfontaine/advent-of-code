@@ -27,17 +27,15 @@ class PositionState(NamedTuple):
 
 
 class City(IntGrid):
-    MAX_STEPS_PER_DIRECTION = 3
-
     @property
     def end_position(self):
         return self.width - 1, self.height - 1
 
-    def get_least_heat_loss(self):
+    def get_least_heat_loss(self, *, min_steps_per_direction: int, max_steps_per_direction: int):
         # (heat so far (used to prioritize so we always explore the path with min cost so far first), state)
         queue: List[Tuple[int, PositionState]] = [
-            (0, PositionState(x=0, y=0, direction=EAST, steps=0)),
-            (0, PositionState(x=0, y=0, direction=SOUTH, steps=0)),
+            (0, PositionState(x=0, y=0, direction=EAST, steps=1)),
+            (0, PositionState(x=0, y=0, direction=SOUTH, steps=1)),
         ]
         heapify(queue)
 
@@ -46,24 +44,27 @@ class City(IntGrid):
 
         heat: int
         position: PositionState
+        candidate_positions: List[PositionState]
         while queue:
             heat, position = heappop(queue)
-
-            if position.coordinates == end_position:
-                return heat
 
             if position in seen:
                 continue
             seen.add(position)
+            candidate_positions = []
 
-            candidate_positions: List[PositionState] = [
-                # try turning
-                position.turn(orientation)
-                for orientation in Orientation
-            ]
+            if position.steps >= min_steps_per_direction:
+                if position.coordinates == end_position:
+                    return heat
+
+                # try turning if we can
+                candidate_positions.extend([
+                    position.turn(orientation)
+                    for orientation in Orientation
+                ])
 
             # trying going forward if we can
-            if position.steps < self.MAX_STEPS_PER_DIRECTION:
+            if position.steps < max_steps_per_direction:
                 candidate_positions.append(position.forward())
 
             for candidate_position in candidate_positions:
@@ -77,11 +78,18 @@ class City(IntGrid):
 
 def problem1(text: str):
     city = City.from_string(text)
-    return city.get_least_heat_loss()
+    return city.get_least_heat_loss(
+        min_steps_per_direction=0,
+        max_steps_per_direction=3,
+    )
 
 
 def problem2(text: str):
-    raise NotImplementedError()
+    city = City.from_string(text)
+    return city.get_least_heat_loss(
+        min_steps_per_direction=4,
+        max_steps_per_direction=10,
+    )
 
 
 if __name__ == '__main__':
