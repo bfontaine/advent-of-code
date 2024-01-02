@@ -65,10 +65,6 @@ class City(IntGrid):
                     position.turn(orientation)
                     for orientation in Orientation
                 ])
-            else:
-                # This could be optimized: we could directly .forward(min_steps_per_direction - position.steps)
-                # and avoid testing intermediate steps
-                pass
 
             # go forward if we can
             if position.steps < max_steps_per_direction:
