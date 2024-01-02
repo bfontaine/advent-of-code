@@ -33,6 +33,17 @@ class Direction(NamedTuple):
     def __repr__(self):
         return f"{self.__class__.__name__}<{DIRECTION_SYMBOLS[DIRECTIONS.index(self)]}>"
 
+    @classmethod
+    def from_char(cls, c: str) -> "Direction":
+        if c in DIRECTION_SYMBOLS:
+            return DIRECTIONS[DIRECTION_SYMBOLS.index(c)]
+
+        # up/right/down/left (day 18, 2023)
+        if c in ALT_DIRECTION_SYMBOLS:
+            return DIRECTIONS[ALT_DIRECTION_SYMBOLS.index(c)]
+
+        raise ValueError(f"Unrecognized direction: {c}")
+
 
 NORTH = Direction(0, -1)
 SOUTH = Direction(0, 1)
@@ -41,6 +52,7 @@ WEST = Direction(-1, 0)
 
 DIRECTIONS = (NORTH, EAST, SOUTH, WEST)
 DIRECTION_SYMBOLS = "NESW"
+ALT_DIRECTION_SYMBOLS = "URDL"  # up/right/down/left (day 18, 2023)
 
 
 class Position(NamedTuple):
