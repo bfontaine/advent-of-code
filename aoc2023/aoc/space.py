@@ -41,3 +41,15 @@ WEST = Direction(-1, 0)
 
 DIRECTIONS = (NORTH, EAST, SOUTH, WEST)
 DIRECTION_SYMBOLS = "NESW"
+
+
+class Position(NamedTuple):
+    x: int
+    y: int
+
+    def go_to(self, direction: Direction, force=1):
+        x1, y1 = direction.apply(self.x, self.y, force=force)
+        return Position(x=x1, y=y1)
+
+    def iter_neighbors(self):
+        return (self.go_to(direction) for direction in DIRECTIONS)

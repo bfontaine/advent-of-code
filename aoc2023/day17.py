@@ -3,7 +3,7 @@ from typing import NamedTuple, List, Set, Tuple
 
 import aoc
 from aoc.containers import IntGrid
-from aoc.directions import Direction, SOUTH, EAST, Orientation
+from aoc.space import Direction, SOUTH, EAST, Orientation
 
 
 class PositionState(NamedTuple):

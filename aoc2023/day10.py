@@ -5,19 +5,7 @@ from colorama import Back, Fore, Style
 
 import aoc
 from aoc import c
-from aoc.directions import Direction, DIRECTIONS, NORTH, WEST, EAST, SOUTH, Orientation
-
-
-@dataclass(frozen=True)
-class Position:
-    x: int
-    y: int
-
-    def go_to(self, direction: Direction):
-        return Position(x=self.x + direction.dx, y=self.y + direction.dy)
-
-    def iter_neighbors(self):
-        return (self.go_to(direction) for direction in DIRECTIONS)
+from aoc.space import Direction, DIRECTIONS, NORTH, WEST, EAST, SOUTH, Orientation, Position
 
 
 @dataclass(frozen=True)

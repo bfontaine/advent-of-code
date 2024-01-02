@@ -1,14 +1,8 @@
 import itertools
-from dataclasses import dataclass, field
 from typing import List, Set
 
 import aoc
-
-
-@dataclass
-class Position:
-    x: int
-    y: int
+from aoc.space import Position
 
 
 class Universe:

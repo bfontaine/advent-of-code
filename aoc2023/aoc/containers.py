@@ -1,6 +1,8 @@
-from typing import List, Iterator, Tuple, Optional, Generic, TypeVar, Iterable, Sequence
+from typing import List, Iterator, Tuple, Optional, Generic, TypeVar, Iterable, Sequence, Any, overload
 
 T = TypeVar('T')
+T2 = TypeVar('T2')
+_guard = object()
 
 
 class AbstractGrid(Generic[T]):
@@ -41,6 +43,20 @@ class AbstractGrid(Generic[T]):
             self._compact_cells([column[y] for column in self.columns])
             for y in range(self.height)
         ]
+
+    @overload
+    def get(self, x: int, y: int) -> T:
+        ...
+
+    @overload
+    def get(self, x: int, y: int, _default: T2) -> T | T2:
+        pass
+
+    def get(self, x: int, y: int, _default: Any = _guard) -> Any:
+        if _default != _guard and not self.valid_coordinates(x, y):
+            return _default
+
+        return self.rows[y][x]
 
     def _compact_cells(self, cells: List[T]) -> Sequence[T]:
         return cells

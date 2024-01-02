@@ -1,6 +1,6 @@
 import pytest
 
-from aoc.directions import NORTH, SOUTH, EAST, WEST
+from aoc.space import NORTH, SOUTH, EAST, WEST
 
 
 @pytest.mark.parametrize("direction,opposite", [

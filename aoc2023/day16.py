@@ -4,7 +4,7 @@ from typing import Set, List, Tuple, Iterator
 
 import aoc
 from aoc.containers import StringGrid
-from aoc.directions import Direction, EAST, SOUTH, NORTH, WEST
+from aoc.space import Direction, EAST, SOUTH, NORTH, WEST
 
 
 class Tile(str, enum.Enum):
