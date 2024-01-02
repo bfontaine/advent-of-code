@@ -1,6 +1,6 @@
 import enum
 from collections import deque
-from typing import Set, Tuple, List, Deque
+from typing import Set, Tuple, Deque, Iterator
 
 import aoc
 from aoc.space import Position, Direction
@@ -19,6 +19,7 @@ class Tile(str, enum.Enum):
 class Terrain:
     def __init__(self):
         self.dug_tiles: Set[Position] = set()
+        self.current_position = Position(0, 0)
         self.min_x = self.max_x = self.min_y = self.max_y = 0
 
     @property
@@ -45,13 +46,20 @@ class Terrain:
             return Tile.DUG
         return Tile.GROUND
 
-    def dig(self, p: Position):
+    def dig(self):
+        p = self.current_position
         self.min_x = min(self.min_x, p.x)
         self.max_x = max(self.max_x, p.x)
         self.min_y = min(self.min_y, p.y)
         self.max_y = max(self.max_y, p.y)
 
         self.dug_tiles.add(p)
+
+    def dig_trench(self, direction: Direction, amount: int):
+        for _ in range(amount):
+            self.dig()
+            self.current_position = self.current_position.go_to(direction)
+            self.dig()
 
     def get_outside_tiles_count(self):
         outside_tiles = 0
@@ -98,29 +106,29 @@ class Terrain:
             print("".join(row))
 
 
-def parse_dig_plan(text: str):
-    instructions: List[Tuple[Direction, int, str]] = []
+def parse_dig_plan(text: str, mode: int) -> Iterator[Tuple[Direction, int]]:
+    assert mode in {1, 2}
 
     for line in text.splitlines():
-        direction_str, amount, _ = line.split()
-        instructions.append((
+        if mode == 1:
+            direction_str, amount_str, _ = line.split()
+        else:
+            color_code = line.rstrip(")").split("#", 1)[1]
+            # > The last hexadecimal digit encodes the direction to dig: 0 means R, 1 means D, 2 means L, and 3 means U.
+            direction_str = "RDLU"[int(color_code[-1])]
+            amount_str = color_code[:-1]
+
+        yield (
             Direction.from_char(direction_str),
-            int(amount),
-            ""  # useless in part 1
-        ))
-
-    return instructions
+            int(amount_str),
+        )
 
 
-def problem1(text: str):
-    dig_plan = parse_dig_plan(text)
+def run(text: str, mode: int):
+    dig_plan = parse_dig_plan(text, mode=mode)
     terrain = Terrain()
-    position = Position(0, 0)
-    terrain.dig(position)
-    for direction, amount, _ in dig_plan:
-        for _ in range(amount):
-            position = position.go_to(direction)
-            terrain.dig(position)
+    for direction, amount in dig_plan:
+        terrain.dig_trench(direction, amount)
 
     # terrain.pretty_print()
 
@@ -130,8 +138,12 @@ def problem1(text: str):
     return total_size - outside_tiles
 
 
+def problem1(text: str):
+    return run(text, mode=1)
+
+
 def problem2(text: str):
-    raise NotImplementedError()
+    return run(text, mode=2)
 
 
 if __name__ == '__main__':
