@@ -3,12 +3,7 @@ from collections import deque
 from typing import Set, Tuple, Deque, Iterator
 
 import aoc
-from aoc.space import Position, Direction
-
-"""
-Note: the problem is underspecified but we assume there aren’t weird things in the dig plans
-  like overlaps ("8" shapes), dead ends ("U 5" followed by "D 5"), etc.
-"""
+from aoc.space import Position, Direction, SOUTH, EAST, WEST, NORTH
 
 
 class Tile(str, enum.Enum):
@@ -56,6 +51,10 @@ class Terrain:
         self.dug_tiles.add(p)
 
     def dig_trench(self, direction: Direction, amount: int):
+        # TODO store ranges
+        #   - {y: range(x1, x2)} for horizontal ranges
+        #   - {x: range(y1, y2)} for vertical ranges
+        #  => ok but we won't count outside tiles one by one
         for _ in range(amount):
             self.dig()
             self.current_position = self.current_position.go_to(direction)
@@ -100,6 +99,12 @@ class Terrain:
 
         return outside_tiles
 
+    def get_dug_tiles_count(self):
+        outside_tiles = self.get_outside_tiles_count()
+        total_size = self.height * self.width
+
+        return total_size - outside_tiles
+
     def pretty_print(self):
         for y in self.range_y:
             row = [self.get(Position(x, y)) for x in self.range_x]
@@ -125,17 +130,24 @@ def parse_dig_plan(text: str, mode: int) -> Iterator[Tuple[Direction, int]]:
 
 
 def run(text: str, mode: int):
-    dig_plan = parse_dig_plan(text, mode=mode)
-    terrain = Terrain()
-    for direction, amount in dig_plan:
-        terrain.dig_trench(direction, amount)
+    position = Position(0, 0)
+    x2 = y2 = 0
 
-    # terrain.pretty_print()
+    # https://en.wikipedia.org/wiki/Shoelace_formula#Trapezoid_formula
+    double_area = 0
+    parse_dig_plan(text, mode=mode)
 
-    outside_tiles = terrain.get_outside_tiles_count()
-    total_size = terrain.height * terrain.width
+    for direction, amount in parse_dig_plan(text, mode=mode):
+        x1 = x2
+        y1 = y2
 
-    return total_size - outside_tiles
+        position = position.go_to(direction, amount)
+        x2 = position.x
+        y2 = position.y
+
+        double_area += (y1 + y2) * (x1 - x2)
+
+    return int(abs(double_area / 2))
 
 
 def problem1(text: str):
