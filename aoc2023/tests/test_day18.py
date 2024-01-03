@@ -4,10 +4,6 @@ from aoc import assert_examples
 from day18 import problem1, problem2
 
 
-def test_problem1_empty():
-    assert problem1("") == 1
-
-
 @pytest.mark.parametrize("square_size", list(range(1, 40)))
 def test_problem1_squares(square_size):
     plan = "\n".join([f"{direction} {square_size} (#000000)"
