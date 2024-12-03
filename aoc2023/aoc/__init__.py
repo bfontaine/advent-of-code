@@ -2,13 +2,14 @@ import argparse
 import re
 import traceback
 import warnings
+from collections.abc import Iterable
 from datetime import date
 from os import environ
-from typing import Any, Callable, Set, Optional, Iterable, List
+from typing import Any, Callable
 
-from dotenv import load_dotenv
 import aocd
 from aocd.models import Puzzle
+from dotenv import load_dotenv
 
 from .display import colored_text, c
 
@@ -44,7 +45,7 @@ def get_day_and_year():
     return get_day(), YEAR
 
 
-def get_puzzle(day: Optional[int] = None):
+def get_puzzle(day: int | None = None):
     if day is None:
         day = get_day()
 
@@ -56,7 +57,7 @@ def get_input_data():
     return aocd.get_data(day=day, year=year)
 
 
-def example_input_data(day: Optional[int] = None) -> str:
+def example_input_data(day: int | None = None) -> str:
     """Get the first example's input data."""
     puzzle = get_puzzle(day=day)
     assert puzzle.examples, "Puzzle must have examples"
@@ -70,8 +71,8 @@ def refresh_examples():
 
 
 def assert_examples(fn: Solution,
-                    problem: Optional[int] = None,
-                    examples: Optional[Iterable[int]] = None):
+                    problem: int | None = None,
+                    examples: Iterable[int] | None = None):
     if problem is None:
         if match := re.match(r"problem(\d+)", fn.__name__):
             problem = int(match.group(1))
@@ -80,7 +81,7 @@ def assert_examples(fn: Solution,
 
     assert problem in {1, 2}
 
-    example_indexes: Set[int] = set(examples) if examples else set()
+    example_indexes: set[int] = set(examples) if examples else set()
 
     puzzle = get_puzzle()
     for i, example in enumerate(puzzle.examples):
@@ -99,9 +100,9 @@ def assert_examples(fn: Solution,
 
 def run(
         solution1: Solution,
-        solution2: Optional[Solution] = None,
+        solution2: Solution | None = None,
         *,
-        flags: Optional[List[str]] = None,
+        flags: list[str] | None = None,
 ):
     p = argparse.ArgumentParser()
     p.add_argument("--refresh-examples", "-r", action="store_true",

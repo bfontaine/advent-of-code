@@ -1,3 +1,4 @@
+from collections import Counter
 from heapq import heapify, heappush, heappop
 
 import aoc
@@ -26,7 +27,19 @@ def problem1(text: str):
 
 
 def problem2(text: str):
-    raise NotImplementedError()
+    list1: list[int] = []
+    occ2: Counter[int] = Counter()
+
+    for line in text.splitlines():
+        e1, e2 = line.split()
+        list1.append(int(e1))
+        occ2[int(e2)] += 1
+
+    n = 0
+    for e1 in list1:
+        n += e1 * occ2[e1]
+
+    return n
 
 
 if __name__ == '__main__':
