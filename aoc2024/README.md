@@ -13,6 +13,8 @@ AOC_SESSION=...
 AOC_YEAR=2024
 ```
 
+See [here](https://github.com/wimglenn/advent-of-code-wim/issues/1) to get your session key.
+
 ## Run
 
     poetry run python dayXX.py [1|2]
